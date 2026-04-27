@@ -24,6 +24,10 @@ dist/
 # Runtime
 logs/
 
+# Local data dumps
+cs_backend/tools/all_item_data.json
+cs_backend/lookprice/cookie.json
+
 # OS / editor
 .DS_Store
 Thumbs.db

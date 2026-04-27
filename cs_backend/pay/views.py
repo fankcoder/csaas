@@ -6,7 +6,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from .models import Order, Plan
-from .serializers import OrderCreateSerializer, OrderSerializer, PlanSerializer
+from .serializers import OrderCreateSerializer, OrderSerializer, PlanSerializer, SubscriptionSerializer
+from .services import activate_subscription, active_subscription
 
 
 class PlanViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -40,4 +41,16 @@ class OrderViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Retrie
         order.status = Order.Status.PAID
         order.paid_at = timezone.now()
         order.save(update_fields=["status", "paid_at"])
+        activate_subscription(order)
         return Response(OrderSerializer(order).data)
+
+
+class CurrentSubscriptionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SubscriptionSerializer
+
+    def list(self, request, *args, **kwargs):
+        subscription = active_subscription(request.user)
+        if not subscription:
+            return Response({"active": False, "subscription": None})
+        return Response({"active": True, "subscription": SubscriptionSerializer(subscription).data})

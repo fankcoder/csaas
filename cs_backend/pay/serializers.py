@@ -1,7 +1,7 @@
 from django.conf import settings
 from rest_framework import serializers
 
-from .models import Order, Plan
+from .models import Order, Plan, Subscription
 
 
 class PlanSerializer(serializers.ModelSerializer):
@@ -50,4 +50,21 @@ class OrderCreateSerializer(serializers.Serializer):
             user=self.context["request"].user,
             plan=plan,
             amount_cny=plan.price_cny,
+        )
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    plan = PlanSerializer(read_only=True)
+
+    class Meta:
+        model = Subscription
+        fields = (
+            "id",
+            "plan",
+            "status",
+            "current_period_start",
+            "current_period_end",
+            "canceled_at",
+            "created_at",
+            "updated_at",
         )

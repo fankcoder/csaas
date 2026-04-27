@@ -64,6 +64,7 @@ def to_opportunity(row: dict, batch_id: str, calculated_at, usd_cny_rate: Decima
         direction_a_source_price=row["buy_source_price"],
         direction_a_source_currency=row["buy_source_currency"],
         direction_a_volume=row["buy_volume"],
+        direction_a_quotes=row.get("buy_quotes", []),
         direction_b_platform=row["sell_platform"],
         direction_b_platform_label=row["sell_platform_label"],
         direction_b_group=row["sell_group"],
@@ -73,6 +74,7 @@ def to_opportunity(row: dict, batch_id: str, calculated_at, usd_cny_rate: Decima
         direction_b_volume=row["sell_volume"],
         direction_b_fee_rate=row["sell_fee_rate"],
         direction_b_net_cny=row["sell_net_cny"],
+        direction_b_quotes=row.get("sell_quotes", []),
         profit_cny=row["profit_cny"],
         margin_pct=row["margin_pct"],
         usd_cny_rate=usd_cny_rate,
@@ -110,12 +112,17 @@ def main() -> int:
     calculated_at = timezone.now()
     cross_group_only = not args.include_same_group
 
-    queryset = Price.objects.select_related("iteminfo").filter(iteminfo__isnull=False)
+    queryset = (
+        Price.objects.select_related("iteminfo")
+        .prefetch_related("iteminfo__platform_listings")
+        .filter(iteminfo__isnull=False)
+    )
     scanned = 0
     generated = 0
     inserted = 0
     pending = []
     top_rows: list[tuple[Decimal, int, dict]] = []
+    top_sequence = 0
 
     def flush() -> None:
         nonlocal inserted, pending
@@ -145,7 +152,8 @@ def main() -> int:
             generated += len(rows)
 
             for row in rows:
-                push_top(top_rows, row, generated)
+                top_sequence += 1
+                push_top(top_rows, row, top_sequence)
                 if args.execute:
                     pending.append(
                         to_opportunity(

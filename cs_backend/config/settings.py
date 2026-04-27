@@ -153,6 +153,15 @@ CORS_ALLOWED_ORIGINS = env_list(
 )
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "http://localhost:3000")
+BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://127.0.0.1:8000")
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@localhost")
+EMAIL_VERIFICATION_TTL_SECONDS = int(os.getenv("EMAIL_VERIFICATION_TTL_SECONDS", "600"))
+STEAM_OPENID_REALM = os.getenv("STEAM_OPENID_REALM", FRONTEND_BASE_URL)
+STEAM_OPENID_RETURN_TO = os.getenv(
+    "STEAM_OPENID_RETURN_TO",
+    f"{BACKEND_BASE_URL.rstrip('/')}/api/auth/steam/callback/",
+)
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -177,9 +186,11 @@ if redis_url.startswith(("redis://", "rediss://")) and redis_available:
 else:
     CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
 
-USD_CNY_RATE = os.getenv("USD_CNY_RATE", "7.25")
+USD_CNY_RATE = os.getenv("USD_CNY_RATE", "6.8")
 MARKET_SELL_FEES = {
     "buff": os.getenv("BUFF_SELL_FEE", "0.025"),
     "waxpeer": os.getenv("WAXPEER_SELL_FEE", "0.07"),
     "shadowpay": os.getenv("SHADOWPAY_SELL_FEE", "0.05"),
+    "youpin": os.getenv("YOUPIN_SELL_FEE", "0.05"),
+    "c5": os.getenv("C5_SELL_FEE", "0.05"),
 }

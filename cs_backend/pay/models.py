@@ -40,3 +40,29 @@ class Order(models.Model):
 
     def __str__(self) -> str:
         return f"{self.out_trade_no} {self.status}"
+
+
+class Subscription(models.Model):
+    class Status(models.TextChoices):
+        ACTIVE = "active", "生效中"
+        CANCELED = "canceled", "已取消"
+        EXPIRED = "expired", "已过期"
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="subscriptions")
+    plan = models.ForeignKey(Plan, on_delete=models.PROTECT, related_name="subscriptions")
+    order = models.OneToOneField(Order, on_delete=models.SET_NULL, related_name="subscription", blank=True, null=True)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.ACTIVE)
+    current_period_start = models.DateTimeField()
+    current_period_end = models.DateTimeField()
+    canceled_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-current_period_end",)
+        indexes = [
+            models.Index(fields=["user", "status", "current_period_end"]),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.user} {self.plan} {self.status}"
