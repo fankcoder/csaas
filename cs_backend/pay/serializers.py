@@ -23,6 +23,8 @@ class OrderSerializer(serializers.ModelSerializer):
             "status",
             "provider",
             "out_trade_no",
+            "paypal_order_id",
+            "paypal_status",
             "created_at",
             "paid_at",
             "payment_url",
@@ -30,7 +32,11 @@ class OrderSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_payment_url(self, obj):
-        return f"{settings.FRONTEND_BASE_URL}/billing/mock-pay?order={obj.id}"
+        if obj.paypal_checkout_url:
+            return obj.paypal_checkout_url
+        if obj.provider == "mock":
+            return f"{settings.FRONTEND_BASE_URL}/billing/mock-pay?order={obj.id}"
+        return ""
 
 
 class OrderCreateSerializer(serializers.Serializer):
@@ -50,6 +56,7 @@ class OrderCreateSerializer(serializers.Serializer):
             user=self.context["request"].user,
             plan=plan,
             amount_cny=plan.price_cny,
+            provider="paypal",
         )
 
 

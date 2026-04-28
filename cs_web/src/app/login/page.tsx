@@ -22,9 +22,9 @@ type AuthResponse = {
 
 export default function LoginPage() {
   const [mode, setMode] = useState<"login" | "register">("login");
-  const [username, setUsername] = useState("devadmin");
-  const [email, setEmail] = useState("devadmin@example.com");
-  const [password, setPassword] = useState("DevAdmin12345");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -97,7 +97,6 @@ export default function LoginPage() {
         <div className="max-w-2xl">
           <div className="eyebrow">{t("login.eyebrow")}</div>
           <h1 className="mt-3 text-4xl font-semibold text-slate-950">{t("login.title")}</h1>
-          <p className="mt-4 muted-copy">{t("login.devHint")}</p>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <div className="metric-card">
               <div className="text-xs text-slate-500">Auth</div>

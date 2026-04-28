@@ -32,6 +32,11 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     provider = models.CharField(max_length=30, default="mock")
     out_trade_no = models.CharField(max_length=64, unique=True, default=uuid.uuid4)
+    paypal_order_id = models.CharField(max_length=64, blank=True, db_index=True)
+    paypal_capture_id = models.CharField(max_length=64, blank=True)
+    paypal_status = models.CharField(max_length=40, blank=True)
+    paypal_checkout_url = models.URLField(blank=True)
+    provider_payload = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     paid_at = models.DateTimeField(blank=True, null=True)
 

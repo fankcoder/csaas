@@ -48,6 +48,13 @@ def env_clean(name: str, default: str = "") -> str:
     return os.getenv(name, default).strip().strip("\"'")
 
 
+def env_int(name: str, default: int) -> int:
+    try:
+        return int(env_clean(name, str(default)))
+    except ValueError:
+        return default
+
+
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-change-me")
 DEBUG = env_bool("DJANGO_DEBUG", True)
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost")
@@ -132,7 +139,7 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": env_clean("SQLITE_PATH", str(BASE_DIR / "db.sqlite3")),
         }
     }
 
@@ -206,3 +213,23 @@ MARKET_SELL_FEES = {
     "youpin": os.getenv("YOUPIN_SELL_FEE", "0.05"),
     "c5": os.getenv("C5_SELL_FEE", "0.05"),
 }
+
+PAYPAL_MODE = env_clean("PAYPAL_MODE", "sandbox").lower()
+PAYPAL_CLIENT_ID = env_clean("PAYPAL_CLIENT_ID")
+PAYPAL_CLIENT_SECRET = env_clean("PAYPAL_CLIENT_SECRET")
+PAYPAL_CURRENCY = env_clean("PAYPAL_CURRENCY", "USD").upper()
+PAYPAL_BRAND_NAME = env_clean("PAYPAL_BRAND_NAME", "FloatVia")
+PAYPAL_TIMEOUT_SECONDS = env_int("PAYPAL_TIMEOUT_SECONDS", 20)
+PAYPAL_API_BASE_URL = env_clean(
+    "PAYPAL_API_BASE_URL",
+    "https://api-m.paypal.com" if PAYPAL_MODE == "live" else "https://api-m.sandbox.paypal.com",
+)
+PAYPAL_RETURN_URL = env_clean(
+    "PAYPAL_RETURN_URL",
+    f"{FRONTEND_BASE_URL.rstrip('/')}/billing/paypal/return",
+)
+PAYPAL_CANCEL_URL = env_clean(
+    "PAYPAL_CANCEL_URL",
+    f"{FRONTEND_BASE_URL.rstrip('/')}/pricing",
+)
+PAYPAL_ENABLE_MOCK_PAYMENTS = env_bool("PAYPAL_ENABLE_MOCK_PAYMENTS", DEBUG)

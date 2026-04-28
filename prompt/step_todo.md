@@ -9,9 +9,14 @@
 要对标https://skinedge.net/
 
 
+提供buff和uu的余额购买。
+用户充值->上架一个贴纸到buff或uu，我去购买。
+
+
 网站支持多语言设置，默认英语，可选项为（英语 Français Español Português 简体中文）。blog不用翻译用英语即可。然后不管是哪种语言，饰品的名称都显示英语，就是数据库的Iteminfo.market_hash_name 字段。
 
 
+SDA自动发货使用说明。
 
 
 目前是模拟支付。

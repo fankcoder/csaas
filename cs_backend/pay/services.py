@@ -29,6 +29,10 @@ def user_has_premium(user) -> bool:
 
 
 def activate_subscription(order: Order) -> Subscription:
+    existing = Subscription.objects.filter(order=order).select_related("plan").first()
+    if existing:
+        return existing
+
     now = timezone.now()
     end = now + timezone.timedelta(days=order.plan.duration_days)
     Subscription.objects.filter(user=order.user, status=Subscription.Status.ACTIVE).update(

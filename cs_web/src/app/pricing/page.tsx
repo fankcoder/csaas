@@ -33,6 +33,8 @@ type OrderPayload = {
   id: number;
   plan: Plan;
   status: string;
+  provider: string;
+  payment_url: string;
 };
 
 const pricingCatalog = [
@@ -136,20 +138,29 @@ export default function PricingPage() {
         token,
         body: JSON.stringify({ plan_id: plan.id })
       });
-      const paidOrder = await apiFetch<OrderPayload>(`/api/pay/orders/${order.id}/mock_paid/`, {
-        method: "POST",
-        token,
-        body: JSON.stringify({})
-      });
-      setActivePlanCode(paidOrder.plan.code);
+
+      if (order.status === "paid") {
+        setActivePlanCode(order.plan.code);
+        setMessage({
+          tone: "success",
+          text: `${order.plan.name} is active.`
+        });
+        return;
+      }
+
+      if (order.payment_url) {
+        window.location.href = order.payment_url;
+        return;
+      }
+
       setMessage({
-        tone: "success",
-        text: `${paidOrder.plan.name} is active. Mock payment completed successfully.`
+        tone: "error",
+        text: "PayPal did not return a checkout link. Please try again."
       });
     } catch (err) {
       setMessage({
         tone: "error",
-        text: err instanceof Error ? err.message : "Mock checkout failed."
+        text: err instanceof Error ? err.message : "PayPal checkout failed."
       });
     } finally {
       setBusyCode(null);
@@ -164,7 +175,7 @@ export default function PricingPage() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-lime-300/25 bg-lime-300/10 px-3 py-1.5 text-sm font-semibold text-lime-100">
               <CreditCard className="h-4 w-4" />
-              Mock checkout enabled
+              PayPal sandbox checkout
             </div>
             <h1 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight text-white sm:text-5xl">
               Choose the plan that matches your CS2 arbitrage workflow.
@@ -180,11 +191,11 @@ export default function PricingPage() {
               </div>
               <div>
                 <div className="font-semibold text-white">Production-style billing flow</div>
-                <div className="text-sm text-slate-400">No card is charged in this build.</div>
+                <div className="text-sm text-slate-400">Sandbox payments only in this build.</div>
               </div>
             </div>
             <div className="mt-5 grid gap-3 text-sm text-slate-300">
-              <TrustLine label="Instant plan activation after mock payment" />
+              <TrustLine label="Instant plan activation after PayPal capture" />
               <TrustLine label="Subscription state is stored on your account" />
               <TrustLine label="Manual trading only. No asset custody." />
             </div>
@@ -265,7 +276,7 @@ export default function PricingPage() {
                   {!isBusy && !isCurrent ? <ArrowRight className="h-4 w-4" /> : null}
                 </button>
                 <p className="mt-3 text-center text-xs text-slate-500">
-                  {tier.code === "free" ? "Mock activation, no payment method needed." : "Mock payment creates an active subscription instantly."}
+                  {tier.code === "free" ? "Free activation, no payment method needed." : "Secure checkout through PayPal sandbox."}
                 </p>
               </div>
             </article>
@@ -283,8 +294,8 @@ export default function PricingPage() {
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             <ProcessStep step="1" title="Choose plan" text="Select Free, Pro, or Elite from the billing cards." />
-            <ProcessStep step="2" title="Mock payment" text="We create an order and immediately mark it paid." />
-            <ProcessStep step="3" title="Access unlocks" text="Your subscription becomes active on the account." />
+            <ProcessStep step="2" title="PayPal checkout" text="Approve the sandbox payment on PayPal." />
+            <ProcessStep step="3" title="Access unlocks" text="We capture the order and activate your subscription." />
           </div>
         </div>
         <div className="rounded-3xl border border-white/10 bg-white/[0.045] p-6">

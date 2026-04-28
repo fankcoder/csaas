@@ -1,0 +1,4 @@
+帮我对接支付流程，我注册了paypal的沙盒环境，帮我对接到项目中，下面是paypal的配置，
+
+Client ID:AVTfqJPv3v8qbvNPc7BWwjaXhZz0FsyplTTIfZoHQi0dX91wDKZ9rCOKQHejeZ8ycwkTfpmbCkyJbsTj
+Secret:EEwkgGDBn0uTa8rkWl6wrpWI6XxoHgNaN0q7am9B98lzyazD7sp4QfQzqe9ET5EdDOtPk4HXzxy2Rdfo
