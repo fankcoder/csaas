@@ -1,11 +1,29 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, ExternalLink, LockKeyhole, RefreshCw, Search, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink, LockKeyhole, Plus, RefreshCw, Search, ShoppingCart, Star, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
+import { EmptyState, MetricTile, Notice, PageBody, PageHero, Panel, cx } from "@/components/FVPage";
 import { apiFetch } from "@/lib/api";
 import { getToken } from "@/lib/auth";
+import { formatCny, formatDateTime, formatPercent } from "@/lib/format";
+
+type PlatformQuote = {
+  platform: string;
+  label: string;
+  price_cny: string;
+  net_price_cny: string;
+  volume: number;
+  last_updated_at?: string | null;
+  eligible: boolean;
+  is_best_buy?: boolean;
+  is_best_sell?: boolean;
+  is_selected_sell?: boolean;
+  profit_cny?: string | null;
+  margin_pct?: string | null;
+  market_url?: string | null;
+};
 
 type Opportunity = {
   id: number;
@@ -33,22 +51,6 @@ type Opportunity = {
   calculated_at: string;
 };
 
-type PlatformQuote = {
-  platform: string;
-  label: string;
-  price_cny: string;
-  net_price_cny: string;
-  volume: number;
-  last_updated_at?: string | null;
-  eligible: boolean;
-  is_best_buy?: boolean;
-  is_best_sell?: boolean;
-  is_selected_sell?: boolean;
-  profit_cny?: string | null;
-  margin_pct?: string | null;
-  market_url?: string | null;
-};
-
 type PageData = {
   count: number;
   next: string | null;
@@ -58,7 +60,18 @@ type PageData = {
   min_volume: number;
 };
 
-const money = new Intl.NumberFormat("zh-CN", { style: "currency", currency: "CNY" });
+type CartLine = {
+  id: string;
+  itemName: string;
+  marketHashName: string;
+  buyQuotes: PlatformQuote[];
+  sellQuotes: PlatformQuote[];
+  buyPlatform: string;
+  sellPlatform: string;
+  buyPrice: number;
+  sellPrice: number;
+  quantity: number;
+};
 
 const SELL_PLATFORM_OPTIONS = [
   { value: "", label: "Best profit" },
@@ -77,11 +90,12 @@ export default function ArbitragePage() {
   const [data, setData] = useState<PageData | null>(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [cart, setCart] = useState<CartLine[]>([]);
 
   async function load(nextPage = page) {
     const token = getToken();
     if (!token) {
-      setMessage("Please log in and subscribe before using arbitrage search.");
+      setMessage("Log in and subscribe before using the full arbitrage terminal.");
       return;
     }
 
@@ -103,7 +117,7 @@ export default function ArbitragePage() {
       setData(payload);
       setPage(nextPage);
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Failed to load data.");
+      setMessage(err instanceof Error ? err.message : "Failed to load arbitrage data.");
     } finally {
       setLoading(false);
     }
@@ -141,171 +155,389 @@ export default function ArbitragePage() {
     }
   }
 
-  return (
-    <main className="app-page">
-      <div className="mb-6 rounded-lg border border-slate-200 bg-white p-5 shadow-panel">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <div className="eyebrow">Arbitrage Terminal</div>
-          <h1 className="mt-1 text-3xl font-semibold text-slate-950">CS2 Skin Profit Search</h1>
-          <p className="mt-2 muted-copy">
-            Direction A uses the lowest buy price. Direction B can show the best profit or a selected sell platform.
-          </p>
-        </div>
+  function quoteNumber(value: string | number | null | undefined) {
+    const parsed = Number(value ?? 0);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
 
-        <form className="grid gap-2 sm:grid-cols-[260px_120px_160px_auto]" onSubmit={submit}>
-          <label className="relative">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+  function addToCart(item: Opportunity) {
+    const buyQuote =
+      item.buy_quotes.find((quote) => quote.is_best_buy) ??
+      item.buy_quotes.find((quote) => quote.platform === item.buy_platform) ??
+      item.buy_quotes[0];
+    const sellQuote =
+      item.sell_quotes.find((quote) => quote.is_selected_sell) ??
+      item.sell_quotes.find((quote) => quote.is_best_sell) ??
+      item.sell_quotes.find((quote) => quote.platform === item.sell_platform) ??
+      item.sell_quotes[0];
+
+    setCart((current) => [
+      {
+        id: `${item.id}-${Date.now()}`,
+        itemName: item.market_name_cn || item.market_hash_name,
+        marketHashName: item.market_hash_name,
+        buyQuotes: item.buy_quotes,
+        sellQuotes: item.sell_quotes,
+        buyPlatform: buyQuote?.platform ?? item.buy_platform,
+        sellPlatform: sellQuote?.platform ?? item.sell_platform,
+        buyPrice: quoteNumber(buyQuote?.price_cny ?? item.buy_price_cny),
+        sellPrice: quoteNumber(sellQuote?.net_price_cny ?? item.sell_net_cny),
+        quantity: 1
+      },
+      ...current
+    ]);
+  }
+
+  function updateCartLine(id: string, patch: Partial<CartLine>) {
+    setCart((current) => current.map((line) => (line.id === id ? { ...line, ...patch } : line)));
+  }
+
+  function changeCartPlatform(id: string, mode: "buy" | "sell", platform: string) {
+    setCart((current) =>
+      current.map((line) => {
+        if (line.id !== id) return line;
+        const quote = (mode === "buy" ? line.buyQuotes : line.sellQuotes).find((entry) => entry.platform === platform);
+        if (!quote) return line;
+        return mode === "buy"
+          ? { ...line, buyPlatform: platform, buyPrice: quoteNumber(quote.price_cny) }
+          : { ...line, sellPlatform: platform, sellPrice: quoteNumber(quote.net_price_cny) };
+      })
+    );
+  }
+
+  const cartSummary = useMemo(() => {
+    const buyCost = cart.reduce((sum, line) => sum + line.buyPrice * line.quantity, 0);
+    const sellRevenue = cart.reduce((sum, line) => sum + line.sellPrice * line.quantity, 0);
+    const profit = sellRevenue - buyCost;
+    const margin = buyCost > 0 ? (profit / buyCost) * 100 : 0;
+    return { buyCost, sellRevenue, profit, margin };
+  }, [cart]);
+
+  const latestCalculation = data?.results?.[0]?.calculated_at;
+
+  return (
+    <main className="bg-[#050711] text-white">
+      <PageHero
+        eyebrow="Arbitrage Terminal"
+        title="Cross-market deal table"
+        description="Direction A uses the lowest eligible buy price. Direction B can show the best exit route or the exact sell platform you select."
+      >
+        <Panel className="grid gap-3 p-4">
+          <MetricTile label="Opportunities" value={data?.count ?? 0} detail={`Page ${page}`} />
+          <MetricTile label="Volume floor" value={data?.min_volume ?? minVolume} tone="cyan" detail="Applied to platform liquidity" />
+          <MetricTile label="Last calculation" value={latestCalculation ? formatDateTime(latestCalculation) : "Waiting"} tone="slate" />
+        </Panel>
+      </PageHero>
+
+      <PageBody>
+        <Panel className="p-4">
+          <form className="grid gap-3 lg:grid-cols-[minmax(220px,1fr)_150px_190px_auto]" onSubmit={submit}>
+            <label className="relative">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              <input
+                className="input-control pl-9"
+                placeholder="Search item name"
+                value={q}
+                onChange={(event) => setQ(event.target.value)}
+              />
+            </label>
             <input
-              className="input-control pl-9"
-              placeholder="Item name"
-              value={q}
-              onChange={(event) => setQ(event.target.value)}
+              aria-label="Minimum volume"
+              className="input-control"
+              min={0}
+              type="number"
+              value={minVolume}
+              onChange={(event) => setMinVolume(Number(event.target.value))}
             />
-          </label>
-          <input
-            className="input-control"
-            min={0}
-            type="number"
-            value={minVolume}
-            onChange={(event) => setMinVolume(Number(event.target.value))}
-          />
-          <select
-            className="input-control"
-            value={sellPlatform}
-            onChange={(event) => setSellPlatform(event.target.value)}
+            <select
+              aria-label="Sell platform"
+              className="input-control"
+              value={sellPlatform}
+              onChange={(event) => setSellPlatform(event.target.value)}
+            >
+              {SELL_PLATFORM_OPTIONS.map((option) => (
+                <option key={option.value || "best"} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            <button className="btn-primary">
+              <RefreshCw className={cx("h-4 w-4", loading && "animate-spin")} />
+              Search
+            </button>
+          </form>
+        </Panel>
+
+        {message ? (
+          <Notice
+            title="Access required"
+            tone="warning"
+            actions={
+              <>
+                <Link className="btn-primary" href="/login">
+                  <LockKeyhole className="h-4 w-4" />
+                  Log in
+                </Link>
+                <Link className="btn-secondary" href="/pricing">
+                  View pricing
+                </Link>
+              </>
+            }
           >
-            {SELL_PLATFORM_OPTIONS.map((option) => (
-              <option key={option.value || "best"} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <button className="btn-primary">
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            Search
-          </button>
-        </form>
+            {message}
+          </Notice>
+        ) : null}
+
+        <CartPanel
+          cart={cart}
+          summary={cartSummary}
+          onChangePlatform={changeCartPlatform}
+          onRemove={(id) => setCart((current) => current.filter((line) => line.id !== id))}
+          onUpdate={updateCartLine}
+        />
+
+        <Panel className="overflow-hidden">
+          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+            <div className="font-mono-display text-sm font-semibold text-slate-200">{data?.count ?? 0} opportunities</div>
+            <div className="status-pill">Page {page}</div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-[1180px] table-fixed divide-y divide-white/10 text-sm">
+              <thead className="table-header">
+                <tr>
+                  <th className="w-[300px] px-4 py-3">Item</th>
+                  <th className="w-[300px] px-4 py-3">Direction A Buy</th>
+                  <th className="w-[300px] px-4 py-3">Direction B Sell</th>
+                  <th className="w-[120px] px-4 py-3 text-right">Profit</th>
+                  <th className="w-[110px] px-4 py-3 text-right">Margin</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {(data?.results ?? []).map((item) => (
+                  <tr key={item.id} className="transition-colors duration-150 hover:bg-white/[0.04]">
+                    <td className="px-4 py-3 align-top">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <Link
+                            className="font-semibold text-white transition-colors duration-150 hover:text-lime-200"
+                            href={`/items/${item.iteminfo_id}`}
+                          >
+                            {item.market_name_cn || item.market_hash_name}
+                          </Link>
+                          <div className="mt-1 truncate text-xs text-slate-500">{item.market_hash_name}</div>
+                          <div className="mt-2 text-xs text-slate-500">Calculated {formatDateTime(item.calculated_at)}</div>
+                        </div>
+                        <button
+                          className={cx(
+                            "rounded-md border p-2 transition-colors duration-150",
+                            item.is_favorited
+                              ? "border-lime-300/35 bg-lime-300/10 text-lime-200"
+                              : "border-white/10 text-slate-500 hover:border-lime-300/35 hover:text-lime-200"
+                          )}
+                          onClick={() => toggleFavorite(item)}
+                          title={item.is_favorited ? "Remove favorite" : "Save favorite"}
+                        >
+                          <Star className={cx("h-4 w-4", item.is_favorited && "fill-lime-200")} />
+                        </button>
+                        <button
+                          className="rounded-md border border-cyan-300/20 bg-cyan-300/10 p-2 text-cyan-100 transition-colors duration-150 hover:border-cyan-200/45 hover:bg-cyan-300/15"
+                          onClick={() => addToCart(item)}
+                          title="Add to profit cart"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 align-top">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <span className="font-semibold text-slate-100">{item.buy_group_label}</span>
+                        <span className="font-mono-display text-xs text-lime-200">{formatCny(item.buy_price_cny)}</span>
+                      </div>
+                      <QuoteList mode="buy" quotes={item.buy_quotes} />
+                    </td>
+                    <td className="px-4 py-3 align-top">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <span className="font-semibold text-slate-100">{item.sell_platform_label}</span>
+                        <span className="font-mono-display text-xs text-cyan-200">{formatCny(item.sell_net_cny)}</span>
+                      </div>
+                      <QuoteList mode="sell" quotes={item.sell_quotes} />
+                    </td>
+                    <td className="px-4 py-3 text-right align-top font-mono-display text-base font-semibold text-lime-200">
+                      {formatCny(item.profit_cny)}
+                    </td>
+                    <td className="px-4 py-3 text-right align-top">
+                      <div className="font-mono-display font-medium text-white">{formatPercent(item.margin_pct)}</div>
+                      <div className="mt-1 inline-flex rounded-md bg-lime-300/10 px-2 py-1 text-xs font-semibold text-lime-200">
+                        LQ {item.liquidity_score}
+                      </div>
+                      {item.risk_flags.length ? (
+                        <div className="mt-1 text-xs text-rose-200">{item.risk_flags.join(", ")}</div>
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+                {!loading && (data?.results ?? []).length === 0 ? (
+                  <tr>
+                    <td colSpan={5}>
+                      <EmptyState
+                        title="No opportunities match the current filters"
+                        description="Try lowering the volume threshold, clearing the item search, or switching Direction B back to best profit."
+                      />
+                    </td>
+                  </tr>
+                ) : null}
+              </tbody>
+            </table>
+          </div>
+          <div className="flex items-center justify-between border-t border-white/10 px-4 py-3">
+            <button className="btn-secondary" disabled={!data?.previous} onClick={() => load(Math.max(1, page - 1))}>
+              <ArrowLeft className="h-4 w-4" />
+              Prev
+            </button>
+            <button className="btn-secondary" disabled={!data?.next} onClick={() => load(page + 1)}>
+              Next
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+        </Panel>
+      </PageBody>
+    </main>
+  );
+}
+
+function CartPanel({
+  cart,
+  summary,
+  onChangePlatform,
+  onRemove,
+  onUpdate
+}: {
+  cart: CartLine[];
+  summary: { buyCost: number; sellRevenue: number; profit: number; margin: number };
+  onChangePlatform: (id: string, mode: "buy" | "sell", platform: string) => void;
+  onRemove: (id: string) => void;
+  onUpdate: (id: string, patch: Partial<CartLine>) => void;
+}) {
+  return (
+    <Panel className="overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="rounded-md bg-cyan-300/10 p-2 text-cyan-200">
+            <ShoppingCart className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="font-mono-display text-sm font-semibold text-slate-100">Estimated return cart</div>
+            <div className="text-xs text-slate-500">Switch platforms or quantities to recalculate locally.</div>
+          </div>
+        </div>
+        <div className="grid gap-2 text-right sm:grid-cols-4 sm:text-left">
+          <CartMetric label="Buy cost" value={formatCny(summary.buyCost)} />
+          <CartMetric label="Sell revenue" value={formatCny(summary.sellRevenue)} />
+          <CartMetric label="Est. profit" value={formatCny(summary.profit)} tone={summary.profit >= 0 ? "good" : "bad"} />
+          <CartMetric label="Margin" value={`${summary.margin.toFixed(2)}%`} />
         </div>
       </div>
 
-      {message ? (
-        <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-5 text-amber-900">
-          <div className="flex items-center gap-2 font-semibold">
-            <LockKeyhole className="h-5 w-5" />
-            {message}
-          </div>
-          <div className="mt-3 flex gap-2">
-            <Link className="btn-primary" href="/login">
-              Login
-            </Link>
-            <Link className="rounded-md border border-amber-300 px-4 py-2 text-sm font-semibold" href="/pricing">
-              Pricing
-            </Link>
-          </div>
-        </div>
-      ) : null}
-
-      <section className="section-panel overflow-hidden">
-        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-          <div className="font-mono-display text-sm font-semibold text-slate-700">{data?.count ?? 0} opportunities</div>
-          <div className="status-pill">Page {page}</div>
-        </div>
+      {cart.length ? (
         <div className="overflow-x-auto">
-          <table className="min-w-[1180px] table-fixed divide-y divide-slate-200 text-sm">
+          <table className="min-w-[1080px] table-fixed divide-y divide-white/10 text-sm">
             <thead className="table-header">
               <tr>
                 <th className="w-[300px] px-4 py-3">Item</th>
-                <th className="w-[300px] px-4 py-3">Direction A Buy</th>
-                <th className="w-[300px] px-4 py-3">Direction B Sell</th>
-                <th className="w-[120px] px-4 py-3">Profit</th>
-                <th className="w-[110px] px-4 py-3">Margin</th>
+                <th className="w-[220px] px-4 py-3">Buy platform</th>
+                <th className="w-[150px] px-4 py-3 text-right">Buy price</th>
+                <th className="w-[220px] px-4 py-3">Sell platform</th>
+                <th className="w-[150px] px-4 py-3 text-right">Sell price</th>
+                <th className="w-[120px] px-4 py-3 text-right">Qty</th>
+                <th className="w-[150px] px-4 py-3 text-right">Est. profit</th>
+                <th className="w-[80px] px-4 py-3 text-right">Remove</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {(data?.results ?? []).map((item) => (
-                <tr key={item.id} className="transition-colors duration-200 hover:bg-blue-50/40">
-                  <td className="px-4 py-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <Link
-                          className="font-semibold text-slate-950 transition-colors duration-200 hover:text-blue-800"
-                          href={`/items/${item.iteminfo_id}`}
-                        >
-                          {item.market_name_cn || item.market_hash_name}
-                        </Link>
-                        <div className="mt-1 truncate text-xs text-slate-500">{item.market_hash_name}</div>
-                      </div>
-                      <button
-                        className={`rounded-md border px-2 py-1 text-xs font-semibold transition-colors duration-200 ${
-                          item.is_favorited ? "border-amber-300 bg-amber-50 text-amber-700" : "border-slate-200 text-slate-500 hover:border-blue-300 hover:bg-blue-50"
-                        }`}
-                        onClick={() => toggleFavorite(item)}
-                        title={item.is_favorited ? "Remove favorite" : "Save favorite"}
+            <tbody className="divide-y divide-white/10">
+              {cart.map((line) => {
+                const profit = (line.sellPrice - line.buyPrice) * line.quantity;
+                return (
+                  <tr key={line.id} className="hover:bg-white/[0.035]">
+                    <td className="px-4 py-3">
+                      <div className="font-semibold text-white">{line.itemName}</div>
+                      <div className="mt-1 truncate text-xs text-slate-500">{line.marketHashName}</div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <select
+                        aria-label={`${line.itemName} buy platform`}
+                        className="input-control"
+                        value={line.buyPlatform}
+                        onChange={(event) => onChangePlatform(line.id, "buy", event.target.value)}
                       >
-                        <Star className={`h-4 w-4 ${item.is_favorited ? "fill-amber-500" : ""}`} />
+                        {line.buyQuotes.map((quote) => (
+                          <option key={`${line.id}-buy-${quote.platform}`} value={quote.platform}>
+                            {quote.label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono-display text-lime-200">{formatCny(line.buyPrice)}</td>
+                    <td className="px-4 py-3">
+                      <select
+                        aria-label={`${line.itemName} sell platform`}
+                        className="input-control"
+                        value={line.sellPlatform}
+                        onChange={(event) => onChangePlatform(line.id, "sell", event.target.value)}
+                      >
+                        {line.sellQuotes.map((quote) => (
+                          <option key={`${line.id}-sell-${quote.platform}`} value={quote.platform}>
+                            {quote.label}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono-display text-cyan-200">{formatCny(line.sellPrice)}</td>
+                    <td className="px-4 py-3">
+                      <input
+                        aria-label={`${line.itemName} quantity`}
+                        className="input-control text-right"
+                        min={1}
+                        step={1}
+                        type="number"
+                        value={line.quantity}
+                        onChange={(event) => onUpdate(line.id, { quantity: Math.max(1, Number(event.target.value) || 1) })}
+                      />
+                    </td>
+                    <td className={cx("px-4 py-3 text-right font-mono-display font-semibold", profit >= 0 ? "text-lime-200" : "text-rose-200")}>
+                      {formatCny(profit)}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <button
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/10 text-slate-400 transition-colors duration-150 hover:border-rose-300/35 hover:bg-rose-300/10 hover:text-rose-200"
+                        onClick={() => onRemove(line.id)}
+                        title="Remove from cart"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </button>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="font-semibold text-slate-950">{item.buy_group_label}</span>
-                      <span className="text-xs text-slate-500">{money.format(Number(item.buy_price_cny))}</span>
-                    </div>
-                    <QuoteList mode="buy" quotes={item.buy_quotes} />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="font-semibold text-slate-950">{item.sell_platform_label}</span>
-                      <span className="text-xs text-slate-500">{money.format(Number(item.sell_net_cny))}</span>
-                    </div>
-                    <QuoteList mode="sell" quotes={item.sell_quotes} />
-                  </td>
-                  <td className="px-4 py-3 font-mono-display text-base font-semibold text-blue-800">
-                    {money.format(Number(item.profit_cny))}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="font-mono-display font-medium text-slate-950">{Number(item.margin_pct).toFixed(2)}%</div>
-                    <div className="mt-1 inline-flex rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-800">
-                      LQ {item.liquidity_score}
-                    </div>
-                    {item.risk_flags.length ? (
-                      <div className="mt-1 text-xs text-amber-700">{item.risk_flags.join(", ")}</div>
-                    ) : null}
-                  </td>
-                </tr>
-              ))}
-              {!loading && (data?.results ?? []).length === 0 ? (
-                <tr>
-                  <td className="px-4 py-10 text-center text-slate-500" colSpan={5}>
-                    <div className="font-semibold text-slate-700">No opportunities match the current filters.</div>
-                    <div className="mt-1 text-sm">Try lowering the volume threshold or changing the sell platform.</div>
-                  </td>
-                </tr>
-              ) : null}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
-        <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-          <button
-            className="btn-secondary"
-            disabled={!data?.previous}
-            onClick={() => load(Math.max(1, page - 1))}
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Prev
-          </button>
-          <button
-            className="btn-secondary"
-            disabled={!data?.next}
-            onClick={() => load(page + 1)}
-          >
-            Next
-            <ArrowRight className="h-4 w-4" />
-          </button>
+      ) : (
+        <div className="px-4 py-8 text-center text-sm text-slate-500">
+          Add deals from the table to model a basket-level estimated return.
         </div>
-      </section>
-    </main>
+      )}
+    </Panel>
+  );
+}
+
+function CartMetric({ label, value, tone }: { label: string; value: string; tone?: "good" | "bad" }) {
+  return (
+    <div>
+      <div className="text-xs text-slate-500">{label}</div>
+      <div className={cx("font-mono-display text-sm font-semibold", tone === "good" ? "text-lime-200" : tone === "bad" ? "text-rose-200" : "text-white")}>
+        {value}
+      </div>
+    </div>
   );
 }
 
@@ -333,37 +565,38 @@ function QuoteList({ quotes, mode }: { quotes: PlatformQuote[]; mode: "buy" | "s
         return (
           <a
             key={`${quote.platform}-${mode}`}
-            className={`group relative block rounded-md border px-3 py-2 transition-colors duration-200 ${
+            className={cx(
+              "group relative block rounded-md border px-3 py-2 transition-colors duration-150",
               active
-                ? "border-blue-300 bg-blue-50 text-slate-950"
+                ? "border-lime-300/35 bg-lime-300/10 text-white"
                 : quote.eligible
-                  ? "border-slate-200 bg-white"
-                  : "border-slate-200 bg-slate-50 text-slate-400"
-            } ${quote.market_url ? "hover:border-blue-300 hover:shadow-sm" : ""}`}
+                  ? "border-white/10 bg-white/[0.03] text-slate-300"
+                  : "border-white/10 bg-white/[0.02] text-slate-500",
+              quote.market_url && "hover:border-cyan-300/35"
+            )}
             href={quote.market_url || undefined}
             rel="noreferrer"
             target={quote.market_url ? "_blank" : undefined}
-            title={`最后更新时间：${formatUpdatedAt(quote.last_updated_at)}${quote.market_url ? "；点击打开平台页面" : ""}`}
+            title={`Last updated: ${formatDateTime(quote.last_updated_at)}${quote.market_url ? "; open market page" : ""}`}
           >
             <div className="pointer-events-none absolute left-3 top-2 z-20 rounded-md bg-slate-950 px-2 py-1 text-xs text-white opacity-0 shadow-lg transition-opacity duration-75 group-hover:opacity-100 group-focus-visible:opacity-100">
-              最后更新时间：{formatUpdatedAt(quote.last_updated_at)}
+              Last updated: {formatDateTime(quote.last_updated_at)}
             </div>
             <div className="flex items-center justify-between gap-2">
               <span className="flex min-w-0 items-center gap-1 font-medium">
                 <span className="truncate">{quote.label}</span>
-                {quote.market_url ? <ExternalLink className="h-3.5 w-3.5 shrink-0 text-slate-400" /> : null}
+                {quote.market_url ? <ExternalLink className="h-3.5 w-3.5 shrink-0 text-slate-500" /> : null}
               </span>
-              <span className="font-semibold">{money.format(Number(value))}</span>
+              <span className="font-mono-display font-semibold">{formatCny(value)}</span>
             </div>
-            <div className="mt-1 flex items-center justify-between text-xs">
+            <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
               <span>Volume {quote.volume}</span>
               <span>{status}</span>
             </div>
-            <div className="mt-1 truncate text-xs text-slate-500">Updated {formatUpdatedAt(quote.last_updated_at)}</div>
             {mode === "sell" && quote.profit_cny ? (
-              <div className="mt-1 font-mono-display text-xs font-medium text-blue-800">
-                Profit {money.format(Number(quote.profit_cny))}
-                {quote.margin_pct ? ` / ${Number(quote.margin_pct).toFixed(2)}%` : ""}
+              <div className="mt-1 font-mono-display text-xs font-medium text-lime-200">
+                Profit {formatCny(quote.profit_cny)}
+                {quote.margin_pct ? ` / ${formatPercent(quote.margin_pct)}` : ""}
               </div>
             ) : null}
           </a>
@@ -371,11 +604,4 @@ function QuoteList({ quotes, mode }: { quotes: PlatformQuote[]; mode: "buy" | "s
       })}
     </div>
   );
-}
-
-function formatUpdatedAt(value?: string | null) {
-  if (!value) return "暂无更新时间";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString();
 }

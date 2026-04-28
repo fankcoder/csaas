@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -34,7 +34,7 @@ body {
     linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 1)),
     #f8fafc;
   font-family:
-    "Fira Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
 }
 
@@ -42,7 +42,7 @@ h1,
 h2,
 h3,
 .font-mono-display {
-  font-family: "Fira Code", "Fira Sans", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: "Space Grotesk", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 button,
@@ -133,4 +133,215 @@ summary:focus-visible {
   .table-header {
     @apply bg-slate-50 text-left text-xs font-semibold uppercase tracking-normal text-slate-500;
   }
+}
+
+.market-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.35) 72%, transparent);
+}
+
+.route-line {
+  position: absolute;
+  height: 2px;
+  width: 44rem;
+  transform-origin: left center;
+  background: linear-gradient(90deg, transparent, rgba(190, 242, 100, 0.1), rgba(103, 232, 249, 0.7), transparent);
+  animation: route-scan 5s linear infinite;
+}
+
+.route-line-a {
+  left: 8%;
+  top: 18rem;
+  transform: rotate(13deg);
+}
+
+.route-line-b {
+  left: 30%;
+  top: 10rem;
+  transform: rotate(-10deg);
+  animation-delay: 1.2s;
+}
+
+.route-line-c {
+  left: 18%;
+  top: 31rem;
+  transform: rotate(-4deg);
+  animation-delay: 2.1s;
+}
+
+.deal-tape {
+  position: absolute;
+  display: flex;
+  gap: 0.5rem;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.deal-tape span {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.4rem 0.7rem;
+}
+
+.deal-tape-left {
+  left: 5%;
+  bottom: 8rem;
+  animation: tape-float 12s ease-in-out infinite;
+}
+
+.deal-tape-right {
+  right: 4%;
+  top: 7rem;
+  animation: tape-float 14s ease-in-out infinite reverse;
+}
+
+@keyframes route-scan {
+  0% {
+    opacity: 0;
+    background-position-x: -18rem;
+  }
+  15%,
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    background-position-x: 18rem;
+  }
+}
+
+@keyframes tape-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.fv-app {
+  background:
+    radial-gradient(circle at 12% 6%, rgba(190, 242, 100, 0.16), transparent 30rem),
+    radial-gradient(circle at 88% 12%, rgba(103, 232, 249, 0.12), transparent 34rem),
+    linear-gradient(180deg, #050711 0%, #070a13 48%, #050711 100%);
+}
+
+.fv-app .app-page {
+  @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8;
+}
+
+.fv-app .section-panel,
+.fv-app .data-card,
+.fv-app .metric-card {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
+  backdrop-filter: blur(14px);
+}
+
+.fv-app .data-card:hover {
+  border-color: rgba(190, 242, 100, 0.35) !important;
+}
+
+.fv-app .input-control {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(5, 7, 17, 0.72) !important;
+  color: #f8fafc !important;
+}
+
+.fv-app .input-control::placeholder {
+  color: rgba(148, 163, 184, 0.8);
+}
+
+.fv-app .btn-primary {
+  background: #bef264 !important;
+  color: #020617 !important;
+}
+
+.fv-app .btn-primary:hover {
+  background: #d9f99d !important;
+}
+
+.fv-app .btn-secondary {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #f8fafc !important;
+}
+
+.fv-app .btn-secondary:hover {
+  border-color: rgba(103, 232, 249, 0.35) !important;
+  background: rgba(255, 255, 255, 0.11) !important;
+}
+
+.fv-app .eyebrow {
+  color: #bef264 !important;
+}
+
+.fv-app .muted-copy {
+  color: #94a3b8 !important;
+}
+
+.fv-app .status-pill {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #cbd5e1 !important;
+}
+
+.fv-app .table-header {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #94a3b8 !important;
+}
+
+.fv-app .bg-white,
+.fv-app .bg-slate-50,
+.fv-app .bg-slate-100,
+.fv-app .hover\:bg-blue-50\/40:hover,
+.fv-app .hover\:bg-blue-50\/30:hover,
+.fv-app .hover\:bg-slate-50:hover {
+  background-color: rgba(255, 255, 255, 0.045) !important;
+}
+
+.fv-app .bg-blue-50,
+.fv-app .bg-amber-50,
+.fv-app .bg-rose-50 {
+  background-color: rgba(190, 242, 100, 0.1) !important;
+}
+
+.fv-app .border-slate-100,
+.fv-app .border-slate-200,
+.fv-app .border-slate-300,
+.fv-app .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+.fv-app .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.fv-app .text-slate-950,
+.fv-app .text-slate-900,
+.fv-app .text-slate-800,
+.fv-app .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+.fv-app .text-slate-600,
+.fv-app .text-slate-500,
+.fv-app .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.fv-app .text-blue-800,
+.fv-app .text-amber-700 {
+  color: #bef264 !important;
+}
+
+.fv-app .text-rose-700,
+.fv-app .text-amber-900 {
+  color: #fda4af !important;
 }

@@ -64,7 +64,7 @@ export default function GuidePage() {
           开始平台清单
           <ArrowRight className="h-4 w-4" />
         </Link>
-        <Link className="btn-secondary" href="/tools/cost-simulator">
+        <Link className="btn-secondary" href="/arbitrage">
           计算真实利润
         </Link>
       </div>
