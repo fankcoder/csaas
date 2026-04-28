@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { LegalDocument } from "@/components/LegalDocument";
+import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Disclaimer | FloatVia CS2 Skin Arbitrage Analytics",
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
     "no asset custody",
     "no automated trading",
     "CS2 skin arbitrage risk"
-  ]
+  ],
+  alternates: {
+    canonical: absoluteUrl("/disclaimer")
+  }
 };
 
 export default function DisclaimerPage() {

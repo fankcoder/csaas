@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { LegalDocument } from "@/components/LegalDocument";
+import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | FloatVia CS2 Skin Arbitrage Analytics",
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
     "personal information",
     "Steam account",
     "data security"
-  ]
+  ],
+  alternates: {
+    canonical: absoluteUrl("/privacy")
+  }
 };
 
 export default function PrivacyPage() {

@@ -1,14 +1,24 @@
 import type { MetadataRoute } from "next";
 
-const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+import { absoluteUrl } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/profile", "/favorites", "/reports"]
+      disallow: [
+        "/api/",
+        "/admin/",
+        "/profile",
+        "/favorites",
+        "/reports",
+        "/login",
+        "/billing/",
+        "/steam/callback",
+        "/onboarding"
+      ]
     },
-    sitemap: `${baseUrl}/sitemap.xml`
+    sitemap: absoluteUrl("/sitemap.xml")
   };
 }

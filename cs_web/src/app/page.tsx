@@ -14,12 +14,16 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 import { MarketStatusStrip } from "@/components/MarketStatusStrip";
+import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "FloatVia - CS2 Skin Arbitrage Analytics",
   description:
     "Cross-market CS2 skin arbitrage analytics across Chinese and global marketplaces including BUFF, YouPin, Waxpeer and ShadowPay.",
-  keywords: ["CS2 skin arbitrage", "BUFF arbitrage", "Waxpeer analytics", "CS2 skin trading", "FloatVia"]
+  keywords: ["CS2 skin arbitrage", "BUFF arbitrage", "Waxpeer analytics", "CS2 skin trading", "FloatVia"],
+  alternates: {
+    canonical: absoluteUrl("/")
+  }
 };
 
 const marketRows = [

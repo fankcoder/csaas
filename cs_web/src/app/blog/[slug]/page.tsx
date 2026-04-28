@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 
 import { Notice, PageBody, PageHero, Panel } from "@/components/FVPage";
 import { blogPosts, getBlogPost } from "@/lib/blog";
+import { absoluteUrl, siteName } from "@/lib/seo";
 
 type Props = {
   params: { slug: string };
@@ -23,11 +24,21 @@ export function generateMetadata({ params }: Props): Metadata {
     title: `${post.title} | FloatVia Guides`,
     description: post.description,
     keywords: post.keywords,
+    alternates: {
+      canonical: absoluteUrl(`/blog/${post.slug}`)
+    },
     openGraph: {
       title: post.title,
       description: post.description,
+      url: absoluteUrl(`/blog/${post.slug}`),
+      siteName,
       type: "article",
       publishedTime: post.updatedAt
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description
     }
   };
 }
@@ -43,6 +54,7 @@ export default function BlogPostPage({ params }: Props) {
     "@type": "Article",
     headline: post.title,
     description: post.description,
+    mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
     dateModified: post.updatedAt,
     keywords: post.keywords.join(", ")
   };

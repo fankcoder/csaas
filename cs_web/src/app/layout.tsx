@@ -3,23 +3,76 @@ import type { ReactNode } from "react";
 
 import { AppShell } from "@/components/AppShell";
 import { I18nProvider } from "@/lib/i18n";
+import {
+  defaultDescription,
+  defaultKeywords,
+  defaultTitle,
+  organizationJsonLd,
+  siteName,
+  siteUrl,
+  websiteJsonLd
+} from "@/lib/seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
+  metadataBase: new URL(siteUrl),
+  applicationName: siteName,
   title: {
-    default: "FloatVia - CS2 Skin Arbitrage Analytics",
+    default: defaultTitle,
     template: "%s | FloatVia"
   },
-  description:
-    "Cross-market CS2 skin price comparison, profit calculation, liquidity filtering, price snapshots and risk analytics.",
-  keywords: ["CS2 skin arbitrage", "BUFF analytics", "Waxpeer analytics", "CS2 skin trading", "FloatVia"]
+  description: defaultDescription,
+  keywords: defaultKeywords,
+  alternates: {
+    canonical: siteUrl
+  },
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg"
+  },
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    siteName,
+    title: defaultTitle,
+    description: defaultDescription,
+    locale: "en_US"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: defaultTitle,
+    description: defaultDescription
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1
+    }
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+  },
+  category: "technology"
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <I18nProvider>
           <AppShell>{children}</AppShell>
         </I18nProvider>

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { absoluteUrl } from "@/lib/seo";
+
 export const metadata: Metadata = {
   title: "FAQ | FloatVia CS2 Skin Arbitrage Analytics",
   description:
@@ -10,7 +12,10 @@ export const metadata: Metadata = {
     "skin profit analytics",
     "BUFF Waxpeer arbitrage",
     "FloatVia FAQ"
-  ]
+  ],
+  alternates: {
+    canonical: absoluteUrl("/faq")
+  }
 };
 
 const faqGroups = [
@@ -87,8 +92,24 @@ const faqGroups = [
 ];
 
 export default function FAQPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqGroups.flatMap((group) =>
+      group.items.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer
+        }
+      }))
+    )
+  };
+
   return (
     <main className="bg-slate-50">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
           <div className="max-w-3xl">

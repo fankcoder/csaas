@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { LegalDocument } from "@/components/LegalDocument";
+import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Terms of Service | FloatVia CS2 Skin Arbitrage Analytics",
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
     "data analytics platform",
     "no automated trading",
     "no asset custody"
-  ]
+  ],
+  alternates: {
+    canonical: absoluteUrl("/terms")
+  }
 };
 
 export default function TermsPage() {

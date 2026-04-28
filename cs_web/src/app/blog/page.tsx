@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { PageBody, PageHero, Panel } from "@/components/FVPage";
 import { blogPosts } from "@/lib/blog";
+import { absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "CS2 Skin Arbitrage Guides",
@@ -16,14 +17,34 @@ export const metadata: Metadata = {
     "Steam trade restrictions",
     "CS2 skin fees",
     "arbitrage risk"
-  ]
+  ],
+  alternates: {
+    canonical: absoluteUrl("/blog")
+  }
 };
 
 const seoTopics = ["BUFF", "Waxpeer", "Steam limits", "Fees", "Liquidity", "Risk"];
 
 export default function BlogPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "FloatVia CS2 skin market playbooks",
+    description: metadata.description,
+    url: absoluteUrl("/blog"),
+    blogPost: blogPosts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.description,
+      url: absoluteUrl(`/blog/${post.slug}`),
+      dateModified: post.updatedAt,
+      keywords: post.keywords.join(", ")
+    }))
+  };
+
   return (
     <main className="bg-[#050711] text-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <PageHero
         eyebrow="Blog"
         title="CS2 skin market playbooks"
