@@ -94,7 +94,7 @@ export default function SamplesPage() {
                 {(data?.results ?? []).map((item) => (
                   <tr key={item.id} className="transition-colors duration-150 hover:bg-white/[0.04]">
                     <td className="px-4 py-3">
-                      <div className="font-semibold text-white">{item.market_name_cn || item.market_hash_name}</div>
+                      <div className="font-semibold text-white">{item.market_hash_name}</div>
                       <div className="mt-1 truncate text-xs text-slate-500">{item.market_hash_name}</div>
                     </td>
                     <td className="px-4 py-3 text-slate-300">

@@ -28,3 +28,11 @@
    - 历史保留多久：7 天、30 天、90 天还是永久？
    - 稳定性评分按价格标准差、最大回撤、连续可套利时长，还是成交成功率计算？
    - 价格快照表数据量会明显增长，是否接受按天归档或只保留聚合指标？
+
+9. Steam 第三方登录：当前项目改为 Steam OpenID 登录方式，对齐 `cs_backend/tmp/authentication` 里参考项目的思路。
+   当前实现：后端生成 Steam OpenID 登录 URL，Steam 回调到 `/api/auth/steam/callback/` 后用 `check_authentication` 校验，再重定向到前端 `/steam/callback?token=...`，前端保存站内 token。
+   配置项：
+   - `STEAM_API_KEY`：可选，用于登录成功后调用 `GetPlayerSummaries` 拉取公开 Steam 昵称等资料。
+   - `STEAM_OPENID_REALM`：建议与后端域名一致，例如 `http://127.0.0.1:8000`。
+   - `STEAM_OPENID_RETURN_TO`：后端回调地址，例如 `http://127.0.0.1:8000/api/auth/steam/callback/`。
+   说明：Steamworks OAuth 2.0 仍然需要 Valve 分配 `client_id`，但当前网页登录不走那套方案，因此不再需要 `STEAM_OAUTH_CLIENT_ID` 和 `STEAM_OAUTH_REDIRECT_URI`。

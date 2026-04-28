@@ -8,6 +8,7 @@ from .views import (
     RegisterView,
     SteamBindView,
     SteamInventoryView,
+    SteamInventorySyncView,
     SteamCallbackView,
     SteamLoginUrlView,
     SteamMockLoginView,
@@ -25,4 +26,5 @@ urlpatterns = [
     path("steam/mock-login/", SteamMockLoginView.as_view(), name="steam-mock-login"),
     path("steam/bind/", SteamBindView.as_view(), name="steam-bind"),
     path("steam/inventory/", SteamInventoryView.as_view(), name="steam-inventory"),
+    path("steam/inventory/sync/", SteamInventorySyncView.as_view(), name="steam-inventory-sync"),
 ]

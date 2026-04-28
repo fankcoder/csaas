@@ -93,7 +93,7 @@ export default function FavoritesPage() {
                   {item.direction_a_platform} → {item.direction_b_platform}
                 </div>
                 <h2 className="mt-2 text-lg font-semibold text-slate-950">
-                  {item.iteminfo.market_name_cn || item.iteminfo.market_hash_name}
+                  {item.iteminfo.market_hash_name}
                 </h2>
                 <div className="mt-1 text-xs text-slate-500">{item.iteminfo.market_hash_name}</div>
               </div>

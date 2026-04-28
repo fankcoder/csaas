@@ -315,7 +315,7 @@ export function Dashboard() {
                     {opportunities.map((item) => (
                       <tr key={`${item.iteminfo_id}-${item.buy_platform_label}-${item.sell_platform_label}`} className="hover:bg-slate-50">
                         <td className="px-4 py-3">
-                          <div className="font-medium text-slate-950">{item.market_name_cn || item.market_hash_name}</div>
+                          <div className="font-medium text-slate-950">{item.market_hash_name}</div>
                           <div className="mt-1 truncate text-xs text-slate-500">{item.market_hash_name}</div>
                           <div className="mt-2 flex gap-2">
                             {item.category ? <Tag>{item.category}</Tag> : null}

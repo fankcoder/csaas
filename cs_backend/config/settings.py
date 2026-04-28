@@ -44,6 +44,10 @@ def env_list(name: str, default: str = "") -> list[str]:
     return [item.strip() for item in raw.split(",") if item.strip()]
 
 
+def env_clean(name: str, default: str = "") -> str:
+    return os.getenv(name, default).strip().strip("\"'")
+
+
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "dev-only-change-me")
 DEBUG = env_bool("DJANGO_DEBUG", True)
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost")
@@ -157,7 +161,8 @@ BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://127.0.0.1:8000")
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@localhost")
 EMAIL_VERIFICATION_TTL_SECONDS = int(os.getenv("EMAIL_VERIFICATION_TTL_SECONDS", "600"))
-STEAM_OPENID_REALM = os.getenv("STEAM_OPENID_REALM", FRONTEND_BASE_URL)
+STEAM_API_KEY = os.getenv("STEAM_API_KEY", os.getenv("STEAM_WEB_API_KEY", ""))
+STEAM_OPENID_REALM = os.getenv("STEAM_OPENID_REALM", BACKEND_BASE_URL)
 STEAM_OPENID_RETURN_TO = os.getenv(
     "STEAM_OPENID_RETURN_TO",
     f"{BACKEND_BASE_URL.rstrip('/')}/api/auth/steam/callback/",
@@ -173,7 +178,14 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 30,
 }
 
-redis_url = os.getenv("REDIS_URL", "")
+redis_url = env_clean("REDIS_URL")
+if not redis_url.startswith(("redis://", "rediss://")) and env_clean("REDIS_HOST"):
+    redis_host = env_clean("REDIS_HOST", "127.0.0.1")
+    redis_port = env_clean("REDIS_PORT", "6379")
+    redis_db = env_clean("REDIS_DB_INDEX", "0")
+    redis_password = env_clean("REDIS_PASSWORD")
+    auth = f":{redis_password}@" if redis_password else ""
+    redis_url = f"redis://{auth}{redis_host}:{redis_port}/{redis_db}"
 redis_available = importlib.util.find_spec("django_redis") is not None
 if redis_url.startswith(("redis://", "rediss://")) and redis_available:
     CACHES = {

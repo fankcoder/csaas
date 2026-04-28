@@ -154,7 +154,7 @@ export default function ReportsPage() {
             {records.map((record) => (
               <div key={record.id} className="grid gap-2 p-4 text-sm transition-colors duration-200 hover:bg-blue-50/40 md:grid-cols-[minmax(0,1fr)_120px_120px]">
                 <div>
-                  <div className="font-semibold text-slate-950">{record.iteminfo.market_name_cn || record.iteminfo.market_hash_name}</div>
+                  <div className="font-semibold text-slate-950">{record.iteminfo.market_hash_name}</div>
                   <div className="mt-1 text-xs text-slate-500">
                     {record.direction_a_platform} → {record.direction_b_platform} · {new Date(record.traded_at).toLocaleString()}
                   </div>

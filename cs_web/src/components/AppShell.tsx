@@ -15,26 +15,29 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 import { CookieConsent } from "@/components/CookieConsent";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { clearAuth, getUser, type StoredUser } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 
 const nav = [
-  { href: "/arbitrage", label: "Deals", icon: BarChart3 },
-  { href: "/samples", label: "Samples", icon: Star },
-  { href: "/blog", label: "Blog", icon: Newspaper },
-  { href: "/pricing", label: "Pricing", icon: CreditCard },
-  { href: "/profile", label: "Account", icon: UserCircle }
+  { href: "/arbitrage", labelKey: "nav.deals", icon: BarChart3 },
+  { href: "/samples", labelKey: "nav.samples", icon: Star },
+  { href: "/blog", labelKey: "nav.blog", icon: Newspaper },
+  { href: "/pricing", labelKey: "nav.pricing", icon: CreditCard },
+  { href: "/profile", labelKey: "nav.account", icon: UserCircle }
 ];
 
 const legalLinks = [
-  { href: "/faq", label: "FAQ" },
-  { href: "/terms", label: "Terms" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/disclaimer", label: "Disclaimer" }
+  { href: "/faq", labelKey: "legal.faq" },
+  { href: "/terms", labelKey: "legal.terms" },
+  { href: "/privacy", labelKey: "legal.privacy" },
+  { href: "/disclaimer", labelKey: "legal.disclaimer" }
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<StoredUser | null>(null);
   const pathname = usePathname();
+  const { t } = useI18n();
   const visibleNav = user?.has_premium
     ? nav
     : nav.filter((item) => ["/samples", "/pricing", "/blog"].includes(item.href));
@@ -70,12 +73,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                   }`}
                 >
                   <Icon className="h-4 w-4" />
-                  {item.label}
+                  {t(item.labelKey)}
                 </Link>
               );
             })}
           </nav>
           <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             {user ? (
               <button
                 className="rounded-md border border-white/15 bg-white/10 px-3 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-white/15"
@@ -85,7 +89,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   window.location.href = "/";
                 }}
               >
-                Log out
+                {t("nav.logout")}
               </button>
             ) : (
               <Link
@@ -93,7 +97,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 className="inline-flex items-center gap-2 rounded-md bg-lime-300 px-3 py-2 text-sm font-semibold text-slate-950 transition-colors duration-200 hover:bg-lime-200"
               >
                 <LogIn className="h-4 w-4" />
-                Log in
+                {t("nav.login")}
               </Link>
             )}
           </div>
@@ -112,7 +116,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   }`}
                 >
                   <Icon className="h-4 w-4" />
-                  {item.label}
+                  {t(item.labelKey)}
                 </Link>
               );
             })}
@@ -122,7 +126,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="min-h-0 flex-1">{children}</div>
       <footer className="border-t border-white/10 bg-[#050711]">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-sm text-slate-400 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <p>Data analysis only. No guaranteed profit. No asset custody. No automated trading.</p>
+          <p>{t("footer.notice")}</p>
           <nav className="flex flex-wrap gap-4">
             {legalLinks.map((item) => (
               <Link
@@ -130,7 +134,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 href={item.href}
                 key={item.href}
               >
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             ))}
           </nav>

@@ -7,6 +7,31 @@ export type StoredUser = {
   is_staff?: boolean;
   is_superuser?: boolean;
   steam_id?: string;
+  steam_persona_name?: string;
+  steam_profile?: {
+    steam_id?: string;
+    openid_claimed_id?: string;
+    openid_identity?: string;
+    persona_name?: string;
+    profile_url?: string;
+    avatar?: string;
+    avatar_medium?: string;
+    avatar_full?: string;
+    community_visibility_state?: number | null;
+    profile_state?: number | null;
+    persona_state?: number | null;
+    last_logoff?: string | null;
+    comment_permission?: number | null;
+    real_name?: string;
+    primary_clan_id?: string;
+    time_created?: string | null;
+    persona_state_flags?: number | null;
+    loc_country_code?: string;
+    loc_state_code?: string;
+    loc_city_id?: number | null;
+    profile_raw?: Record<string, unknown>;
+    profile_synced_at?: string | null;
+  };
   has_premium?: boolean;
 };
 

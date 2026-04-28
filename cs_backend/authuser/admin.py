@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import EmailVerificationCode, UserPlatformChecklist, UserProfile
+from .models import EmailVerificationCode, UserPlatformChecklist, UserProfile, UserSteamInventoryItem
 
 
 @admin.register(UserProfile)
@@ -21,3 +21,10 @@ class UserPlatformChecklistAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "key", "is_completed", "completed_at", "updated_at")
     list_filter = ("key", "is_completed")
     search_fields = ("user__username", "user__email", "key")
+
+
+@admin.register(UserSteamInventoryItem)
+class UserSteamInventoryItemAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "steam_id", "market_hash_name", "assetid", "is_active", "synced_at")
+    list_filter = ("is_active", "tradable", "marketable", "appid", "contextid")
+    search_fields = ("user__username", "steam_id", "assetid", "market_hash_name", "market_name", "name")

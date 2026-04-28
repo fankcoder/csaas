@@ -4,6 +4,8 @@ import { Cookie, ShieldCheck, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { useI18n } from "@/lib/i18n";
+
 const CONSENT_KEY = "cs2_cookie_consent_v1";
 
 type ConsentValue = {
@@ -21,6 +23,7 @@ function saveConsent(accepted: ConsentValue["accepted"]) {
 
 export function CookieConsent() {
   const [visible, setVisible] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     setVisible(!window.localStorage.getItem(CONSENT_KEY));
@@ -44,28 +47,28 @@ export function CookieConsent() {
           </div>
           <div>
             <div className="flex items-center gap-2 text-sm font-semibold text-slate-950">
-              Cookie consent
+              {t("cookie.title")}
               <ShieldCheck className="h-4 w-4 text-blue-800" />
             </div>
             <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-600">
-              我们使用必要 Cookie 保持登录和安全状态，并可能使用分析 Cookie 改进产品体验。点击
-              <span className="font-semibold text-slate-900"> Accept all cookies </span>
-              表示同意使用全部 Cookie。你也可以只启用必要 Cookie。
+              {t("cookie.bodyStart")}{" "}
+              <span className="font-semibold text-slate-900">{t("cookie.acceptAll")}</span>{" "}
+              {t("cookie.bodyMiddle")}
               <Link className="ml-1 font-semibold text-blue-800 hover:text-blue-700" href="/privacy">
-                查看隐私政策
+                {t("cookie.privacy")}
               </Link>
             </p>
           </div>
         </div>
         <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
           <button className="btn-primary justify-center" onClick={() => accept("all")}>
-            Accept all cookies
+            {t("cookie.acceptAll")}
           </button>
           <button className="btn-secondary justify-center" onClick={() => accept("essential")}>
-            仅必要 Cookie
+            {t("cookie.essential")}
           </button>
           <button
-            aria-label="关闭 Cookie 提示"
+            aria-label={t("cookie.close")}
             className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 text-slate-500 transition-colors duration-150 hover:bg-slate-100 hover:text-slate-900"
             onClick={() => accept("essential")}
           >

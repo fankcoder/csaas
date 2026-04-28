@@ -61,7 +61,7 @@ def consume_email_code(email: str, code: str, purpose: str = "register") -> bool
     return True
 
 
-def steam_login_url() -> str:
+def steam_login_payload() -> dict[str, str]:
     params = {
         "openid.ns": "http://specs.openid.net/auth/2.0",
         "openid.mode": "checkid_setup",
@@ -70,7 +70,12 @@ def steam_login_url() -> str:
         "openid.identity": "http://specs.openid.net/auth/2.0/identifier_select",
         "openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select",
     }
-    return f"{STEAM_OPENID_ENDPOINT}?{urlencode(params)}"
+    return {
+        "provider": "steam_openid",
+        "url": f"{STEAM_OPENID_ENDPOINT}?{urlencode(params)}",
+        "return_to": settings.STEAM_OPENID_RETURN_TO,
+        "realm": settings.STEAM_OPENID_REALM,
+    }
 
 
 def extract_steam_id(claimed_id: str) -> str:
@@ -91,6 +96,12 @@ def verify_steam_openid(query_params) -> str | None:
     if "is_valid:true" not in body:
         return None
     claimed_id = query_params.get("openid.claimed_id", "")
-    if not claimed_id:
+    identity = query_params.get("openid.identity", "")
+    op_endpoint = query_params.get("openid.op_endpoint", "")
+    if (
+        not claimed_id.startswith("https://steamcommunity.com/openid/id/")
+        or not identity.startswith("https://steamcommunity.com/openid/id/")
+        or op_endpoint != STEAM_OPENID_ENDPOINT
+    ):
         return None
     return extract_steam_id(claimed_id)

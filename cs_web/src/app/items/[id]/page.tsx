@@ -101,7 +101,7 @@ export default function ItemDetailPage({ params }: { params: { id: string } }) {
     );
   }
 
-  const itemTitle = data?.item.market_name_cn || data?.item.market_hash_name || "Item detail";
+  const itemTitle = data?.item.market_hash_name || "Item detail";
 
   return (
     <main className="bg-[#050711] text-white">

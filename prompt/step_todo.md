@@ -9,11 +9,10 @@
 要对标https://skinedge.net/
 
 
-多语言设置。
-英语 Français Español Português 中文
+网站支持多语言设置，默认英语，可选项为（英语 Français Español Português 简体中文）。blog不用翻译用英语即可。然后不管是哪种语言，饰品的名称都显示英语，就是数据库的Iteminfo.market_hash_name 字段。
 
 
-steam库存管理，同步之后需要把steam库存的饰品存到数据库
+
 
 目前是模拟支付。
 正式运营至少要接入一个真实支付渠道。

@@ -36,11 +36,13 @@
 
 ### Steam
 
-- 支持 OpenID 登录 URL 获取与回调校验
+- 支持 Steam OpenID 登录 URL 获取与回调校验
 - 支持开发环境 mock Steam 登录
 - 登录用户可绑定自己的 Steam ID
 - 普通用户只能查询自己的 Steam 库存
 - 管理员可传入任意 `steam_id` 查询
+- `STEAM_API_KEY` 只用于登录成功后拉取公开 Steam 资料，不作为 OpenID 登录必需项
+- Steam OpenID 登录成功后，需要保存 OpenID 返回值、SteamID、`GetPlayerSummaries` 可获取的公开资料和原始 JSON，避免后续字段扩展时丢失历史数据
 
 ### Checklist
 

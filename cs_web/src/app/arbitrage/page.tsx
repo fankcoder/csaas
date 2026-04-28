@@ -174,7 +174,7 @@ export default function ArbitragePage() {
     setCart((current) => [
       {
         id: `${item.id}-${Date.now()}`,
-        itemName: item.market_name_cn || item.market_hash_name,
+        itemName: item.market_hash_name,
         marketHashName: item.market_hash_name,
         buyQuotes: item.buy_quotes,
         sellQuotes: item.sell_quotes,
@@ -322,7 +322,7 @@ export default function ArbitragePage() {
                             className="font-semibold text-white transition-colors duration-150 hover:text-lime-200"
                             href={`/items/${item.iteminfo_id}`}
                           >
-                            {item.market_name_cn || item.market_hash_name}
+                            {item.market_hash_name}
                           </Link>
                           <div className="mt-1 truncate text-xs text-slate-500">{item.market_hash_name}</div>
                           <div className="mt-2 text-xs text-slate-500">Calculated {formatDateTime(item.calculated_at)}</div>

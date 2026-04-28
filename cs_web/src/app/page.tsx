@@ -49,12 +49,6 @@ const featureBlocks = [
   }
 ];
 
-const tiers = [
-  { name: "Free", price: "$0", detail: "Top 20 deals, hourly refresh, basic market data" },
-  { name: "Pro", price: "$29", detail: "All deals, 5-15 min refresh, 90 days analytics" },
-  { name: "Elite", price: "$79", detail: "Real-time alerts, exports, API access, 365 days history" }
-];
-
 export default function Page() {
   return (
     <main className="overflow-hidden bg-[#050711] text-white">
@@ -127,30 +121,6 @@ export default function Page() {
           {featureBlocks.map((feature) => (
             <FeatureBlock key={feature.title} icon={feature.icon} title={feature.title} text={feature.text} />
           ))}
-        </div>
-      </section>
-
-      <section className="border-y border-white/10 bg-[#0c101c] py-14">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:px-8">
-          <div>
-            <div className="text-sm font-semibold text-lime-200">Launch pricing strategy</div>
-            <h2 className="mt-3 text-3xl font-semibold text-white">Price like the market leader. Win with better market coverage.</h2>
-            <p className="mt-4 text-sm leading-6 text-slate-400">
-              Keep the model familiar to overseas traders, then differentiate through BUFF, YouPin and other China-side liquidity.
-            </p>
-          </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            {tiers.map((tier) => (
-              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-5" key={tier.name}>
-                <div className="text-sm font-semibold text-slate-300">{tier.name}</div>
-                <div className="mt-3 flex items-end gap-1">
-                  <span className="text-3xl font-semibold text-white">{tier.price}</span>
-                  <span className="pb-1 text-sm text-slate-400">/mo</span>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-slate-400">{tier.detail}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
