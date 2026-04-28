@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="FloatVia icon">
-  <rect width="512" height="512" rx="112" fill="#050711"/>
-  <path d="M132 318c64-128 152-192 264-192-40 40-72 86-96 138 35-18 67-27 96-27-56 96-136 144-240 144 18-21 34-42 48-63h-72Z" fill="#bef264"/>
-  <path d="M126 236c57-72 126-108 207-108-44 24-81 60-111 108h-96Z" fill="#67e8f9" opacity=".88"/>
-  <circle cx="358" cy="153" r="18" fill="#fda4af"/>
-</svg>

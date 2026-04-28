@@ -5,10 +5,10 @@ import {
   CreditCard,
   LogIn,
   Newspaper,
-  Shield,
   Star,
   UserCircle
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -53,9 +53,14 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-2 font-semibold text-white">
-            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-lime-300 text-slate-950">
-              <Shield className="h-5 w-5" />
-            </span>
+            <Image
+              alt="FloatVia logo"
+              className="h-9 w-auto"
+              height={287}
+              priority
+              src="/big-logo.png"
+              width={449}
+            />
             <span className="font-mono-display">FloatVia</span>
           </Link>
           <nav className="hidden items-center gap-1 xl:flex">

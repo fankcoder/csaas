@@ -28,8 +28,9 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/icon.svg",
-    apple: "/icon.svg"
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/big-logo.png"
   },
   openGraph: {
     type: "website",
@@ -37,12 +38,21 @@ export const metadata: Metadata = {
     siteName,
     title: defaultTitle,
     description: defaultDescription,
-    locale: "en_US"
+    locale: "en_US",
+    images: [
+      {
+        url: "/big-logo.png",
+        width: 449,
+        height: 287,
+        alt: "FloatVia logo"
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
     title: defaultTitle,
-    description: defaultDescription
+    description: defaultDescription,
+    images: ["/big-logo.png"]
   },
   robots: {
     index: true,

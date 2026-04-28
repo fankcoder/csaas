@@ -7,6 +7,7 @@ cd cs_backend
 python lookprice\fetch_platforms.py
 python lookprice\fetch_platforms.py buff uu waxpeer shadow
 python lookprice\fetch_platforms.py waxper shadowpay -j 2
+python3 lookprice\fetch_platforms.py uu waxpeer shadow
 ```
 
 已接入 Django ORM 的平台：

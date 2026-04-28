@@ -74,7 +74,7 @@ export const organizationJsonLd = {
   "@type": "Organization",
   name: siteName,
   url: siteUrl,
-  logo: absoluteUrl("/icon.svg"),
+  logo: absoluteUrl("/big-logo.png"),
   sameAs: []
 };
 
