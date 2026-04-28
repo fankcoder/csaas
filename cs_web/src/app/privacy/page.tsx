@@ -3,59 +3,65 @@ import type { Metadata } from "next";
 import { LegalDocument } from "@/components/LegalDocument";
 
 export const metadata: Metadata = {
-  title: "隐私政策 | CS2 饰品套利数据分析平台",
+  title: "Privacy Policy | FloatVia CS2 Skin Arbitrage Analytics",
   description:
-    "CS2 饰品套利数据分析平台隐私政策，说明账号信息、订阅信息、使用日志、Steam 相关配置和数据安全处理方式。",
-  keywords: ["隐私政策", "CS2 饰品套利", "个人信息", "Steam 账号", "数据安全"]
+    "FloatVia Privacy Policy explaining account information, subscription data, usage logs, Steam-related configuration, cookies, local storage, and data security practices.",
+  keywords: [
+    "Privacy Policy",
+    "CS2 skin arbitrage",
+    "personal information",
+    "Steam account",
+    "data security"
+  ]
 };
 
 export default function PrivacyPage() {
   return (
     <LegalDocument
       eyebrow="Privacy"
-      title="隐私政策"
+      title="Privacy Policy"
       updatedAt="2026-04-28"
-      description="本政策说明平台在提供数据分析 SaaS 服务过程中可能收集、使用、存储和保护的信息类型。"
+      description="This policy explains the types of information FloatVia may collect, use, store, and protect while providing data analytics SaaS services."
       sections={[
         {
-          title: "1. 我们可能收集的信息",
+          title: "1. Information We May Collect",
           body:
-            "为提供注册登录、订阅、数据查询和账户安全功能，平台可能收集账号信息、邮箱、登录状态、订阅订单、使用日志、设备与浏览器信息、用户主动配置的 Steam ID、交易链接或平台账号映射信息。"
+            "To provide registration, login, subscription, data query, and account-security features, FloatVia may collect account information, email addresses, login state, subscription orders, usage logs, device and browser information, Steam IDs configured by users, trade links, or marketplace account mapping information."
         },
         {
-          title: "2. 我们如何使用信息",
+          title: "2. How We Use Information",
           body:
-            "信息主要用于身份验证、订阅权益校验、数据查询、风控排查、故障定位、产品改进、客服沟通和合规留存。平台不会使用这些信息代用户执行交易，也不会托管用户饰品或资金。"
+            "Information is primarily used for authentication, subscription entitlement checks, data queries, fraud and risk review, troubleshooting, product improvement, customer support, and compliance retention. FloatVia does not use this information to execute trades for users or custody user skins or funds."
         },
         {
-          title: "3. Steam 与第三方平台信息",
+          title: "3. Steam And Third-Party Marketplace Information",
           body:
-            "如果用户主动绑定 Steam 或配置第三方平台相关信息，平台仅用于展示库存、匹配饰品、生成市场链接或改善数据分析体验。用户应避免提交不必要的敏感凭证，并定期检查第三方平台授权。"
+            "If users voluntarily connect Steam or configure third-party marketplace information, FloatVia uses that information only to display inventory, match items, generate marketplace links, or improve the analytics experience. Users should avoid submitting unnecessary sensitive credentials and should regularly review third-party authorizations."
         },
         {
-          title: "4. 信息共享",
+          title: "4. Information Sharing",
           body:
-            "除法律法规要求、用户授权、支付或基础设施服务所需外，平台不会向无关第三方出售用户个人信息。正式接入支付、邮件、分析或云服务时，应在本政策中补充服务商名称和用途。"
+            "FloatVia does not sell user personal information to unrelated third parties. Information may be shared only when required by law, authorized by the user, or necessary for payment, infrastructure, analytics, email, security, or support services. If formal providers are added, this policy should be updated with provider names and purposes."
         },
         {
-          title: "5. Cookie 与本地存储",
+          title: "5. Cookies And Local Storage",
           body:
-            "前端可能使用 Cookie 或浏览器本地存储保存登录令牌、基础用户状态和 Cookie 偏好，以便保持登录体验、完成安全校验和改进产品体验。首次访问时，用户可以选择接受全部 Cookie 或仅启用必要 Cookie。用户可通过退出登录、清理浏览器数据或后续偏好设置删除本地状态。"
+            "The frontend may use cookies or browser local storage to save login tokens, basic user state, language preference, and cookie consent choices. This helps keep users logged in, complete security checks, and improve product experience. Users can clear local state by logging out, deleting browser data, or changing future preference settings."
         },
         {
-          title: "6. 数据安全",
+          title: "6. Data Security",
           body:
-            "平台应采用访问控制、日志审计、最小权限、密钥隔离和传输加密等措施保护数据。任何互联网服务都无法保证绝对安全，用户也应妥善保护自己的账号和设备。"
+            "FloatVia should use access controls, audit logs, least-privilege permissions, secret isolation, and encrypted transport to protect data. No internet service can guarantee absolute security, and users should also protect their own accounts, devices, passwords, and marketplace credentials."
         },
         {
-          title: "7. 用户权利",
+          title: "7. User Rights",
           body:
-            "用户可根据适用法律要求查询、更正、删除个人信息，或撤回部分授权。若这些操作影响账号识别、订阅校验或安全风控，部分功能可能无法继续使用。"
+            "Depending on applicable law, users may request access to, correction of, or deletion of personal information, or withdraw certain authorizations. If these actions affect account identification, subscription verification, or security controls, some features may no longer be available."
         },
         {
-          title: "8. 政策更新",
+          title: "8. Policy Updates",
           body:
-            "当产品功能、数据处理方式、第三方服务或法律要求发生变化时，平台会更新本政策并展示更新日期。正式运营前建议结合目标地区法律完成合规审查。"
+            "FloatVia may update this policy when product features, data-processing practices, third-party services, or legal requirements change. The updated date will be shown on this page. Before production launch, this policy should be reviewed against the laws of target regions."
         }
       ]}
     />

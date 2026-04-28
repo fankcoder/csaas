@@ -29,13 +29,13 @@ export default function OnboardingPage() {
 
   async function load() {
     if (!token) {
-      setMessage("请先登录后保存平台开通清单。");
+      setMessage("Please log in to save your platform setup checklist.");
       return;
     }
     try {
       setData(await apiFetch<ChecklistResponse>("/api/auth/checklist/", { token }));
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "清单加载失败");
+      setMessage(err instanceof Error ? err.message : "Failed to load the checklist.");
     }
   }
 
@@ -61,9 +61,9 @@ export default function OnboardingPage() {
     return (
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="section-panel p-6">
-          <p className="text-slate-700">{message || "请先登录后进入开通清单。"}</p>
+          <p className="text-slate-700">{message || "Please log in to access the platform setup checklist."}</p>
           <Link className="btn-primary mt-4" href="/login">
-            登录
+            Log in
           </Link>
         </div>
       </main>
@@ -74,8 +74,10 @@ export default function OnboardingPage() {
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-6">
         <div className="eyebrow">Checklist</div>
-        <h1 className="mt-2 text-3xl font-semibold text-slate-950">平台开通清单</h1>
-        <p className="mt-2 muted-copy">把交易前置条件逐项完成，减少执行套利机会时的账号和支付阻塞。</p>
+        <h1 className="mt-2 text-3xl font-semibold text-slate-950">Platform Setup Checklist</h1>
+        <p className="mt-2 muted-copy">
+          Complete the required account, payment, and marketplace setup steps before acting on arbitrage opportunities.
+        </p>
       </div>
 
       <section className="section-panel p-5">
@@ -86,13 +88,13 @@ export default function OnboardingPage() {
             </div>
             <div>
               <div className="font-semibold text-slate-950">
-                {data?.completed_count ?? 0} / {data?.total_count ?? 0} 已完成
+                {data?.completed_count ?? 0} / {data?.total_count ?? 0} completed
               </div>
-              <div className="text-sm text-slate-500">进度 {data?.progress_pct ?? 0}%</div>
+              <div className="text-sm text-slate-500">Progress {data?.progress_pct ?? 0}%</div>
             </div>
           </div>
           <Link className="btn-secondary" href="/guide">
-            查看新手路线
+            View beginner guide
           </Link>
         </div>
 

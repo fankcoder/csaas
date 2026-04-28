@@ -21,14 +21,11 @@ export function LegalDocument({ eyebrow, title, description, updatedAt, sections
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="eyebrow">{eyebrow}</div>
             <time className="text-xs text-slate-500" dateTime={updatedAt}>
-              更新于 {updatedAt}
+              updatedAt {updatedAt}
             </time>
           </div>
           <h1 className="mt-2 text-3xl font-semibold tracking-normal text-slate-950">{title}</h1>
           <p className="mt-3 muted-copy">{description}</p>
-          <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900">
-            重要提示：本平台只提供 CS2 饰品市场数据分析与机会排序，不保证收益，不托管资产，不提供自动交易，也不代表任何第三方交易平台。
-          </div>
           <div className="mt-8 space-y-7">
             {sections.map((section) => (
               <section key={section.title}>

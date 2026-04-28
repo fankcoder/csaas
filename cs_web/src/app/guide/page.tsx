@@ -3,28 +3,28 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "新手套利路线 | CS2 饰品套利数据 SaaS",
-  description: "按预算和经验阶段规划 CS2 饰品套利入门路线。"
+  title: "Beginner Arbitrage Roadmap | FloatVia CS2 Skin Arbitrage SaaS",
+  description: "Plan a beginner-friendly CS2 skin arbitrage path by budget, experience level, liquidity, and execution risk."
 };
 
 const routes = [
   {
-    title: "低预算验证",
-    budget: "¥100 - ¥1000",
-    text: "优先选择高销量、低单价饰品，目标是熟悉平台充值、购买、出售和提现流程。",
-    steps: ["完成平台开通清单", "只看高销量机会", "每次交易后记录真实利润"]
+    title: "Low-Budget Validation",
+    budget: "$15 - $150",
+    text: "Start with high-volume, low-price items. The goal is to learn deposits, purchases, listings, sales, withdrawals, and fee impact before scaling.",
+    steps: ["Complete the platform setup checklist", "Only review high-liquidity opportunities", "Record realized profit after each trade"]
   },
   {
-    title: "稳定周转",
-    budget: "¥1000 - ¥10000",
-    text: "关注利润率和流动性评分的平衡，不追极端价差，控制单个饰品库存占比。",
-    steps: ["设置最小销量阈值", "收藏常见高流动性饰品", "按周复盘收益报表"]
+    title: "Stable Rotation",
+    budget: "$150 - $1,500",
+    text: "Balance margin with liquidity score. Avoid chasing extreme spreads, and keep each item from becoming too large a share of your inventory.",
+    steps: ["Set a minimum volume threshold", "Save common high-liquidity items", "Review profit reports every week"]
   },
   {
-    title: "跨境价差",
-    budget: "¥10000+",
-    text: "重点核算美元汇率、海外平台手续费、提现成本和资金周转周期。",
-    steps: ["使用成本模拟器", "关注数据源状态", "分平台评估方向 B 利润"]
+    title: "Cross-Market Spreads",
+    budget: "$1,500+",
+    text: "Pay close attention to USD exchange rates, marketplace fees, withdrawal costs, and capital turnover time across global platforms.",
+    steps: ["Model all costs before buying", "Watch data-source freshness", "Evaluate Direction B profit by sell platform"]
   }
 ];
 
@@ -33,9 +33,9 @@ export default function GuidePage() {
     <main className="app-page">
       <div className="mb-6">
         <div className="eyebrow">Guide</div>
-        <h1 className="mt-2 text-3xl font-semibold text-slate-950">新手套利路线</h1>
+        <h1 className="mt-2 text-3xl font-semibold text-slate-950">Beginner Arbitrage Roadmap</h1>
         <p className="mt-2 max-w-3xl muted-copy">
-          按预算阶段拆解操作路径，先建立流程熟练度，再逐步提升资金规模和平台覆盖。
+          Break the workflow into budget stages: build execution confidence first, then gradually increase capital size and marketplace coverage.
         </p>
       </div>
 
@@ -61,11 +61,11 @@ export default function GuidePage() {
 
       <div className="mt-6 flex flex-wrap gap-3">
         <Link className="btn-primary" href="/onboarding">
-          开始平台清单
+          Start setup checklist
           <ArrowRight className="h-4 w-4" />
         </Link>
         <Link className="btn-secondary" href="/arbitrage">
-          计算真实利润
+          Calculate real profit
         </Link>
       </div>
     </main>

@@ -3,54 +3,60 @@ import type { Metadata } from "next";
 import { LegalDocument } from "@/components/LegalDocument";
 
 export const metadata: Metadata = {
-  title: "免责声明 | CS2 饰品套利数据分析平台",
+  title: "Disclaimer | FloatVia CS2 Skin Arbitrage Analytics",
   description:
-    "CS2 饰品套利数据分析平台免责声明，明确平台只提供数据分析，不保证收益，不托管资产，不自动交易。",
-  keywords: ["免责声明", "不保证收益", "不托管资产", "不自动交易", "CS2 饰品套利风险"]
+    "FloatVia disclaimer stating that the platform provides data analytics only, does not guarantee profit, does not custody assets, and does not execute automated trades.",
+  keywords: [
+    "Disclaimer",
+    "no guaranteed profit",
+    "no asset custody",
+    "no automated trading",
+    "CS2 skin arbitrage risk"
+  ]
 };
 
 export default function DisclaimerPage() {
   return (
     <LegalDocument
       eyebrow="Disclaimer"
-      title="免责声明"
+      title="Disclaimer"
       updatedAt="2026-04-28"
-      description="本声明用于明确平台信息展示和用户交易决策之间的责任边界。"
+      description="This disclaimer clarifies the boundary between FloatVia's information display and each user's independent trading decisions."
       sections={[
         {
-          title: "1. 不构成收益承诺",
+          title: "1. No Profit Guarantee",
           body:
-            "平台展示的价差、利润率、销量、更新时间和走势图仅为数据分析结果，不代表真实可成交价格，不构成任何收益承诺、投资建议、交易建议或财务建议。"
+            "Spreads, profit margins, volumes, update times, and trend charts displayed by FloatVia are data-analysis outputs only. They do not represent guaranteed executable prices and do not constitute profit promises, investment advice, trading advice, or financial advice."
         },
         {
-          title: "2. 不托管资产",
+          title: "2. No Asset Custody",
           body:
-            "平台不保管用户 Steam 饰品、交易平台资产、现金余额、支付账户或私钥凭证。用户在任何第三方平台上的充值、提现、购买、出售和转移行为均由用户自行完成。"
+            "FloatVia does not custody Steam skins, marketplace assets, cash balances, payment accounts, private keys, or credentials. Any deposits, withdrawals, purchases, sales, or transfers on third-party marketplaces are completed by users independently."
         },
         {
-          title: "3. 不自动交易",
+          title: "3. No Automated Trading",
           body:
-            "平台不会自动替用户下单、挂单、购买、出售、转移库存或确认 Steam 交易。任何交易执行均需要用户自行登录对应平台并独立判断。"
+            "FloatVia does not automatically place orders, list items, buy items, sell items, transfer inventory, or confirm Steam trades on behalf of users. Any trade execution requires users to log in to the relevant marketplace and make their own decision."
         },
         {
-          title: "4. 数据可能存在误差",
+          title: "4. Data May Be Inaccurate",
           body:
-            "由于第三方平台接口、网页结构、网络延迟、汇率、手续费、库存变化、价格单位、itemId 映射、风控限制或数据源异常，平台数据可能延迟、缺失或不准确。用户应在执行前到对应平台复核。"
+            "Due to third-party APIs, webpage changes, network latency, exchange rates, fees, inventory changes, price units, item mapping, risk-control limits, or data-source errors, FloatVia data may be delayed, incomplete, or inaccurate. Users should verify all information on the relevant marketplace before taking action."
         },
         {
-          title: "5. 用户自行承担交易风险",
+          title: "5. Users Bear Trading Risk",
           body:
-            "CS2 饰品价格会波动，交易可能受账号限制、平台规则、冷却期、支付通道、提现成本、KYC、地区限制和政策变化影响。用户应自行评估风险并承担全部交易结果。"
+            "CS2 skin prices can fluctuate, and trades may be affected by account restrictions, marketplace rules, cooldown periods, payment channels, withdrawal costs, KYC, regional limitations, or policy changes. Users are responsible for assessing risk and accepting all outcomes of their own trades."
         },
         {
-          title: "6. 第三方责任",
+          title: "6. Third-Party Responsibility",
           body:
-            "Steam、Valve、BUFF、悠悠有品、Waxpeer、ShadowPay 等第三方平台的服务中断、规则调整、费用变化、账户限制、资产冻结或数据异常，不由本平台承担责任。"
+            "FloatVia is not responsible for service interruptions, rule changes, fee changes, account restrictions, asset freezes, or data abnormalities caused by Steam, Valve, BUFF, YouPin, Waxpeer, ShadowPay, C5, or any other third-party marketplace."
         },
         {
-          title: "7. 内容教育边界",
+          title: "7. Educational Content Boundary",
           body:
-            "FAQ、Blog、教程和工具说明用于产品教育和市场知识整理，不保证完整、最新或适合所有用户。涉及平台规则的内容应以第三方平台官方说明为准。"
+            "FAQ, blog posts, guides, and tool explanations are provided for product education and market knowledge. They are not guaranteed to be complete, current, or suitable for every user. Marketplace-specific rules should always be checked against the official third-party documentation."
         }
       ]}
     />

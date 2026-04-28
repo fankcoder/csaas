@@ -3,59 +3,65 @@ import type { Metadata } from "next";
 import { LegalDocument } from "@/components/LegalDocument";
 
 export const metadata: Metadata = {
-  title: "用户协议 | CS2 饰品套利数据分析平台",
+  title: "Terms of Service | FloatVia CS2 Skin Arbitrage Analytics",
   description:
-    "CS2 饰品套利数据分析平台用户协议，说明服务边界、账号责任、订阅规则、第三方平台关系和禁止用途。",
-  keywords: ["用户协议", "CS2 饰品套利", "数据分析平台", "不自动交易", "不托管资产"]
+    "FloatVia Terms of Service covering service scope, user responsibilities, subscriptions, third-party marketplace relationships, prohibited use, and trading risk boundaries.",
+  keywords: [
+    "Terms of Service",
+    "CS2 skin arbitrage",
+    "data analytics platform",
+    "no automated trading",
+    "no asset custody"
+  ]
 };
 
 export default function TermsPage() {
   return (
     <LegalDocument
       eyebrow="Terms"
-      title="用户协议"
+      title="Terms of Service"
       updatedAt="2026-04-28"
-      description="使用本平台前，请阅读并理解本协议。本协议用于明确平台与用户之间的服务边界和使用规则。"
+      description="Please read these Terms before using FloatVia. They define the service boundaries, user responsibilities, and usage rules for the platform."
       sections={[
         {
-          title: "1. 服务定位",
+          title: "1. Service Scope",
           body:
-            "本平台提供 CS2 饰品市场数据聚合、价格比较、手续费估算、销量过滤、机会排序和相关内容教育。平台不提供投资顾问、财务顾问、法律顾问或任何保证收益的服务。"
+            "FloatVia provides CS2 skin market data aggregation, price comparison, fee estimation, liquidity filtering, opportunity ranking, and educational content. The platform does not provide investment advice, financial advice, legal advice, or any guaranteed-profit service."
         },
         {
-          title: "2. 非交易执行平台",
+          title: "2. Analytics Only; No Trade Execution",
           body:
-            "本平台不托管用户资产，不接收用户饰品，不代用户下单，不自动交易，不控制任何第三方交易平台账户。所有买入、卖出、充值、提现、转账和交易确认均由用户在对应平台自行完成。"
+            "FloatVia does not custody user assets, receive user skins, place orders for users, execute trades automatically, or control any third-party marketplace account. All purchases, sales, deposits, withdrawals, transfers, and trade confirmations are completed manually by users on the relevant marketplace."
         },
         {
-          title: "3. 用户责任",
+          title: "3. User Responsibilities",
           body:
-            "用户应自行确认 Steam、BUFF、悠悠有品、Waxpeer、ShadowPay 等第三方平台的账号状态、交易限制、费用规则、地区限制和合规要求。用户应妥善保管账号、密码、令牌、API Key、交易链接和支付信息。"
+            "Users are responsible for verifying the account status, trading restrictions, fees, regional limitations, and compliance requirements of Steam, BUFF, YouPin, Waxpeer, ShadowPay, C5, and any other marketplace they use. Users must protect their accounts, passwords, tokens, API keys, trade links, and payment information."
         },
         {
-          title: "4. 数据与结果",
+          title: "4. Data And Results",
           body:
-            "平台展示的数据来自公开页面、授权接口、用户配置或其他可接入数据源。由于网络延迟、平台更新、汇率变化、库存变化、映射错误或第三方限制，数据可能存在延迟、缺失或误差。用户不得将平台展示结果视为确定收益。"
+            "Data displayed on FloatVia may come from public pages, authorized APIs, user configuration, or other accessible data sources. Due to network latency, marketplace updates, exchange-rate movement, inventory changes, mapping errors, or third-party limitations, data may be delayed, incomplete, or inaccurate. Users must not treat displayed results as certain profit."
         },
         {
-          title: "5. 订阅与支付",
+          title: "5. Subscriptions And Payments",
           body:
-            "平台可根据订阅计划向用户开放高级数据查询、筛选、收藏、报告或其他功能。订阅权益、价格、周期和退款规则以购买页面展示为准。若未来接入正式支付渠道，将按对应支付服务商规则处理订单。"
+            "FloatVia may offer premium plans that unlock advanced data queries, filters, saved opportunities, reports, alerts, exports, API access, or other features. Subscription benefits, pricing, billing periods, and refund rules are governed by the purchase page shown at the time of purchase. If formal payment providers are added, orders will also be subject to the relevant provider's terms."
         },
         {
-          title: "6. 禁止用途",
+          title: "6. Prohibited Use",
           body:
-            "用户不得利用平台进行违法违规交易、欺诈、洗钱、盗号、绕过平台风控、批量攻击第三方服务、侵犯他人权益或违反 Steam 及各交易平台规则的行为。"
+            "Users may not use FloatVia for illegal or abusive activity, fraud, money laundering, account theft, bypassing marketplace risk controls, bulk attacks against third-party services, infringement of others' rights, or any activity that violates Steam or marketplace rules."
         },
         {
-          title: "7. 第三方平台",
+          title: "7. Third-Party Marketplaces",
           body:
-            "平台与 Steam、Valve、BUFF、悠悠有品、Waxpeer、ShadowPay 等第三方平台不存在代理、担保、雇佣或授权代表关系。第三方平台规则、费用、接口、数据和服务可随时变化，用户应以第三方平台官方页面为准。"
+            "FloatVia is not an agent, guarantor, partner, employee, or authorized representative of Steam, Valve, BUFF, YouPin, Waxpeer, ShadowPay, C5, or any other third-party marketplace. Third-party rules, fees, APIs, data, and services may change at any time. Users should rely on the official pages and terms of each marketplace."
         },
         {
-          title: "8. 协议变更",
+          title: "8. Changes To These Terms",
           body:
-            "平台可根据业务、法律、合规或产品变化更新本协议。更新后的协议将在页面中展示更新日期。用户继续使用平台，即视为接受更新后的规则。"
+            "FloatVia may update these Terms to reflect business, legal, compliance, or product changes. The updated date will be shown on this page. Continued use of the platform after an update means the user accepts the revised Terms."
         }
       ]}
     />

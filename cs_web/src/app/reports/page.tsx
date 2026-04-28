@@ -63,7 +63,7 @@ export default function ReportsPage() {
 
   async function load() {
     if (!token) {
-      setMessage("请先登录后查看收益报表。");
+      setMessage("Please log in to view profit reports.");
       return;
     }
     const payload = await apiFetch<TradeRecord[] | Paginated<TradeRecord>>("/api/price/trade-records/", { token });
@@ -84,24 +84,24 @@ export default function ReportsPage() {
           traded_at: new Date(form.traded_at).toISOString()
         })
       });
-      setMessage("交易记录已保存");
+      setMessage("Trade record saved.");
       await load();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "交易记录保存失败");
+      setMessage(err instanceof Error ? err.message : "Failed to save the trade record.");
     }
   }
 
   useEffect(() => {
-    load().catch((err) => setMessage(err instanceof Error ? err.message : "收益记录加载失败"));
+    load().catch((err) => setMessage(err instanceof Error ? err.message : "Failed to load profit records."));
   }, []);
 
   if (!token) {
     return (
       <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="section-panel p-6">
-          <p>{message || "请先登录。"}</p>
+          <p>{message || "Please log in first."}</p>
           <Link className="btn-primary mt-4" href="/login">
-            登录
+            Log in
           </Link>
         </div>
       </main>
@@ -112,43 +112,43 @@ export default function ReportsPage() {
     <main className="app-page">
       <div className="mb-6">
         <div className="eyebrow">Report</div>
-        <h1 className="mt-2 text-3xl font-semibold text-slate-950">用户收益报表</h1>
-        <p className="mt-2 muted-copy">记录真实买入、卖出、费用和数量，复盘实际收益。</p>
+        <h1 className="mt-2 text-3xl font-semibold text-slate-950">User Profit Reports</h1>
+        <p className="mt-2 muted-copy">Record actual buy prices, sell prices, fees, and quantities to review realized profit.</p>
       </div>
 
       {message ? <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">{message}</div> : null}
 
       <section className="mb-5 grid gap-3 sm:grid-cols-3">
-        <Metric label="记录数" value={records.length} />
-        <Metric label="累计利润" value={money.format(totalProfit)} />
-        <Metric label="平均利润" value={money.format(records.length ? totalProfit / records.length : 0)} />
+        <Metric label="Records" value={records.length} />
+        <Metric label="Total profit" value={money.format(totalProfit)} />
+        <Metric label="Average profit" value={money.format(records.length ? totalProfit / records.length : 0)} />
       </section>
 
       <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
         <form className="section-panel p-5" onSubmit={submit}>
           <div className="mb-4 flex items-center gap-2 font-semibold text-slate-950">
             <Plus className="h-5 w-5" />
-            新增交易记录
+            Add Trade Record
           </div>
           <Input label="Iteminfo ID" name="iteminfo_id" form={form} setForm={setForm} />
-          <Input label="采购平台" name="direction_a_platform" form={form} setForm={setForm} />
-          <Input label="出售平台" name="direction_b_platform" form={form} setForm={setForm} />
-          <Input label="买入价 CNY" name="buy_price_cny" form={form} setForm={setForm} type="number" />
-          <Input label="卖出价 CNY" name="sell_price_cny" form={form} setForm={setForm} type="number" />
-          <Input label="手续费 CNY" name="sell_fee_cny" form={form} setForm={setForm} type="number" />
-          <Input label="其他成本 CNY" name="other_cost_cny" form={form} setForm={setForm} type="number" />
-          <Input label="数量" name="quantity" form={form} setForm={setForm} type="number" />
-          <Input label="成交时间" name="traded_at" form={form} setForm={setForm} type="datetime-local" />
-          <Input label="备注" name="note" form={form} setForm={setForm} />
+          <Input label="Buy platform" name="direction_a_platform" form={form} setForm={setForm} />
+          <Input label="Sell platform" name="direction_b_platform" form={form} setForm={setForm} />
+          <Input label="Buy price CNY" name="buy_price_cny" form={form} setForm={setForm} type="number" />
+          <Input label="Sell price CNY" name="sell_price_cny" form={form} setForm={setForm} type="number" />
+          <Input label="Sell fee CNY" name="sell_fee_cny" form={form} setForm={setForm} type="number" />
+          <Input label="Other cost CNY" name="other_cost_cny" form={form} setForm={setForm} type="number" />
+          <Input label="Quantity" name="quantity" form={form} setForm={setForm} type="number" />
+          <Input label="Trade time" name="traded_at" form={form} setForm={setForm} type="datetime-local" />
+          <Input label="Note" name="note" form={form} setForm={setForm} />
           <button className="btn-primary mt-3 w-full">
-            保存记录
+            Save record
           </button>
         </form>
 
         <section className="section-panel">
           <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-3 font-semibold text-slate-950">
             <BarChart3 className="h-5 w-5" />
-            历史记录
+            Trade History
           </div>
           <div className="divide-y divide-slate-100">
             {records.map((record) => (
@@ -159,7 +159,7 @@ export default function ReportsPage() {
                     {record.direction_a_platform} → {record.direction_b_platform} · {new Date(record.traded_at).toLocaleString()}
                   </div>
                 </div>
-                <div className="text-slate-600">数量 {record.quantity}</div>
+                <div className="text-slate-600">Qty {record.quantity}</div>
                 <div className="font-mono-display font-semibold text-blue-800">{money.format(Number(record.realized_profit_cny))}</div>
               </div>
             ))}

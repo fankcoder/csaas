@@ -43,15 +43,15 @@ User = get_user_model()
 
 
 CHECKLIST_ITEMS = [
-    {"key": "steam_guard", "label": "Steam 手机令牌", "group": "steam"},
-    {"key": "steam_inventory_public", "label": "Steam 库存公开", "group": "steam"},
-    {"key": "steam_trade_url", "label": "Steam 交易链接", "group": "steam"},
-    {"key": "buff_account", "label": "BUFF 账号", "group": "domestic"},
-    {"key": "youpin_account", "label": "悠悠有品账号", "group": "domestic"},
-    {"key": "waxpeer_account", "label": "Waxpeer 账号", "group": "foreign"},
-    {"key": "shadowpay_account", "label": "ShadowPay 账号", "group": "foreign"},
-    {"key": "payment_method", "label": "支付方式", "group": "finance"},
-    {"key": "withdrawal_method", "label": "提现方式", "group": "finance"},
+    {"key": "steam_guard", "label": "Enable Steam Guard mobile authenticator", "group": "Steam"},
+    {"key": "steam_inventory_public", "label": "Make Steam inventory public", "group": "Steam"},
+    {"key": "steam_trade_url", "label": "Add Steam trade URL", "group": "Steam"},
+    {"key": "buff_account", "label": "Prepare BUFF account", "group": "Domestic marketplaces"},
+    {"key": "youpin_account", "label": "Prepare YouPin account", "group": "Domestic marketplaces"},
+    {"key": "waxpeer_account", "label": "Prepare Waxpeer account", "group": "Global marketplaces"},
+    {"key": "shadowpay_account", "label": "Prepare ShadowPay account", "group": "Global marketplaces"},
+    {"key": "payment_method", "label": "Configure payment method", "group": "Finance"},
+    {"key": "withdrawal_method", "label": "Configure withdrawal method", "group": "Finance"},
 ]
 
 STEAM_INVENTORY_SYNC_TTL_SECONDS = 300
@@ -367,7 +367,7 @@ class PlatformChecklistView(APIView):
         serializer.is_valid(raise_exception=True)
         key = serializer.validated_data["key"]
         if key not in {item["key"] for item in CHECKLIST_ITEMS}:
-            return Response({"detail": "未知清单项"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Unknown checklist item."}, status=status.HTTP_400_BAD_REQUEST)
         record, _created = UserPlatformChecklist.objects.get_or_create(user=request.user, key=key)
         record.is_completed = serializer.validated_data["is_completed"]
         record.note = serializer.validated_data.get("note", record.note)
