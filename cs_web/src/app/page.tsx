@@ -13,6 +13,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { HomeDevNotice } from "@/components/HomeDevNotice";
 import { MarketStatusStrip } from "@/components/MarketStatusStrip";
 import { absoluteUrl } from "@/lib/seo";
 
@@ -56,6 +57,7 @@ const featureBlocks = [
 export default function Page() {
   return (
     <main className="overflow-hidden bg-[#050711] text-white">
+      <HomeDevNotice />
       <section className="relative border-b border-white/10">
         <MarketScene />
         <div className="relative mx-auto flex max-w-7xl flex-col px-4 pb-8 pt-12 sm:px-6 lg:px-8">
